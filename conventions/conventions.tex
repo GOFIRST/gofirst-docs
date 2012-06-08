@@ -54,8 +54,19 @@ Please read the \hyperref[pyguide]{Python style guide}, sections "Code lay-out" 
         In addition, jEdit (\url{http://www.jedit.org/}) is a full-featured, cross-platform text editor with support for many programming languages. I've used it for editing Java code and found it to work well for this purpose.
 \end{description}
 
-\subsection{Cross-platform IDEs by language}
-TODO
+\subsection{IDEs by language}
+\begin{description}
+    \item[Java]
+        Eclipse (\url{http://www.eclipse.org/}) is a popular cross-platform IDE for Java and C++ development. It has all the features you'd expect from a standard IDE, plus a (somewhat clumsy) plugin installation system. It can integrate with version control systems such as Git (which we will most likely be using) through the plugin framework. It's a large piece of software -- it's several hundred megabytes and slow to start up on any system. However, many Java (and C++) programmers think the rich feature set, which includes integration with a sort of task-tracking software, is worth it. An alternative is NetBeans (\url{http://netbeans.org/}), which is definitely more lightweight than Eclipse but specializes on Java. It also has a plugin system with a large database of user-contributed plugins (Git support is naturally among them). Some programmers might find the relatively minimalistic approach of NetBeans more appealing than the one-stop-shop philosophy of Eclipse.
+    \item[C/C++]
+        As mentioned above, Eclipse also works well with C++. If you're on a Mac, you could check out XCode (it costs \$ 5 on the Mac App Store). However, it's frustrating to use for development not involving a shiny Mac application. On Windows, Visual Studio is the standard all-in-one IDE available for CSE students for free at \url{http://cselabs.umn.edu/software/msdnaa}. Although designed primarily for Windows development, it's usable for general C/C++ program development.
+    \item[C\#]
+        If we do end up using C\#, those with Windows should use the Microsoft Visual Studio IDE. Those who don't have Windows (or don't want to install it) can try the Mono development environment, see \url{http://www.monodevelop.org/}. 
+    \item[Python]
+        Again, we might not end up using Python at all, but if we do, here are my IDE recommendations: First, it's perfectly possible to develop Python with nothing but a text editor and terminal (that's what I do, and I prefer it to using an IDE). However, if you're used to using IDEs and want to use one for Python, there is one available: IDLE should be installed with the default Python installation (Linux users might need to install an additional package). It's about as minimalistic as IDEs get; nevetheless, it does simplify an integrate the Python development process. Users new to Python or lacking a decent command-line interface might find this helpful.
+    \item[Others]
+        Search the web and use your best judgement :)
+\end{description}
 
 \end{document}
 
