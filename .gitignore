@@ -1,0 +1,6 @@
+# The standard TeX ignores
+*.aux
+*.log
+*.pdfsync
+# VIM swapfiles
+*.swp
