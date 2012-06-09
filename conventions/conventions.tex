@@ -7,13 +7,33 @@
 \usepackage{times}
 \usepackage[defaultmono]{droidmono}
 
+% Custom stylistic preferences
+\usepackage{parskip}
+
 \begin{document}
 \title{GO FIRST Source Code Conventions}
-\author{Max Veit}
+\author{Max Veit\\
+GO FIRST Project Manager \#2}
 \date{Last Updated: \today}
 
 \maketitle
 \tableofcontents
+
+\section{Purpose and Audience}
+The purpose of this document is to establish a uniform style of writing source code for all programs written for GO FIRST. This is intended to facilitate collaboration between programmers as well as maintainability of software, since a uniform style removes one of the main barriers to understanding the source code written by others (or even yourself!). 
+
+This document is aimed at anybody interested in writing programs that will become a part of or aid GO FIRST projects. It assumes only a basic, general knowledge of programming, including the existence of different programming languages, the purpose of a source code file, and the existence of a language-specific syntax for the text contained therein. However, the style guides in Section \ref{sec:references} do assume a basic familiarity with the specific syntax of the language being described. To better understand these guides it might be helpful to find a simple introductory tutorial in the language and its syntactic constructs (such as function definitions, ``if,'' and ``for'' constructs).
+
+\section{Language Classes}
+This section lists the classes of languages that will be discussed in this document.
+\begin{description}
+    \item[C-syntax (C, C++, Java and C\#)] \hfill \\
+        This is a family of languages with differing programming paradigms. The one thing they have in common is the basic syntax derived from C, so they will generally be discussed as a group in this document. We will almost certainly be using one or more of these languages in most GO FIRST projects.
+    \item[Python] \hfill \\
+        This language blurs the boundaries between programming and scripting; its rapid development cycle and interpreted nature make it ideal for high-level control of large, composite programs, an area known as the ``glue layer.'' Its syntax is much simpler and more consistent than that of the C-syntax languages. Whether we use this language in GO FIRST projects remains to be seen.
+    \item[LabVIEW] \hfill \\
+        The language designed for use with National Instruments (NI) hardware. Since we plan on using NI controllers in our larger robot projects we will almost certainly need to use LabVIEW at some point. What distinguishes it from most other languages is that it is a graphical language; programs are created not by writing statements to a source code file but rather by visually connecting virtual blocks with wires. This graphical nature makes it difficult to set specific style guidelines for LabVIEW code. Some conventions are already imposed upon the programmer, but the visual layout of the blocks and wires themselves is completely up to the programmer. ``Spaghetti code'' that looks like a literal pile of spaghetti can quickly ensue if you are not careful to organize the blocks and wires in a logical, readable fashion. A general rule: If you cannot understand the code that you wrote yesterday, you need to put more effort into organizing your code layout.
+\end{description}
 
 \section{References}
 \label{sec:references}
@@ -25,12 +45,12 @@
     \item Pasta Code: \url{http://www.gnu.org/fun/jokes/pasta.code.html} \\
         If youre doing object-oriented programming, please try for ravioli code. Canderli code and Ristto code should be avoided because of poor maintainability. Polenta code is nice, too, if it never needs to be modified (which is generally never the case, so watch out!)
     \item Good Code: \url{http://xkcd.com/844/} \\
-        Please try to stay in the "Code Well" loop. Yes, requirements do change, and I've had to throw out a few projects because of this, but trust me: this is not always the case!
+        Please try to stay in the "Code Well" loop. Yes, requirements do change, and we've had to throw out a few projects because of this, but trust me: this is not always the case!
 \end{itemize}
 
 \section{Technical Notes}
 \begin{itemize}
-\item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
+\item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See Appendix \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
     \item General Rules: We will presumably have programmers on all different systems, so if you have a choice between convenience and compatibility you should almost always choose compatibility.
 
 \end{itemize}
@@ -41,30 +61,48 @@ Please read the \hyperref[pyguide]{Python style guide}, sections "Code lay-out" 
 \appendix
 \section{Editor and IDE recommendations}
 \label{sec:editors}
+This section lists some text editors and Integrated Development Environments (IDEs) that members of GO FIRST have found to be useful and productive for programming diverse languages on the different platforms.
 \subsection{Text editors by platform}
 \begin{description}
-    \item[Windows] As mentioned above, you want to move away from Notepad. It's not even good for editing configuration files. One alternative that I know of is Notepad++ (\url{http://notepad-plus-plus.org/}). 
-    \item[Mac] I don't know of any good Mac-specific text editors (the built-in one is usable, but unsuited to programming), although quite a few cross-platform editors integrate well with OSX. You could also try TextWrangler (\url{http://www.barebones.com/products/TextWrangler/}), although I have personally never used it.
-    \item[GNU/Linux] The built-in editors GEdit (GNOME) and Kate (KDE) are both good, extensible, full-featured, and usable for programming in many languages. However, it might be worth it to take a look at some of the cross-platform editors as well.
-    \item[Cross-platform] There are two classic editors for Unix-like systems that have been extensively ported: 
+    \item[Windows] \hfill \\
+        As mentioned above, you want to move away from Notepad. It's not even good for editing configuration files. One alternative is Notepad++ (\url{http://notepad-plus-plus.org/}). 
+    \item[Mac] \hfill \\
+        The built-in text editor is usable, but unsuited to programming. Luckily, quite a few cross-platform editors integrate well with OSX. You could also try TextWrangler (\url{http://www.barebones.com/products/TextWrangler/}), although I have personally never used it.
+    \item[GNU/Linux] \hfill \\
+        The built-in editors GEdit (GNOME) and Kate (KDE) are both good, extensible, full-featured, and usable for programming in many languages. However, it might be worth it to take a look at some of the cross-platform editors as well.
+    \item[Cross-platform] \hfill \\
+        There are two classic editors for Unix-like systems that have been extensively ported: 
         \begin{itemize}
-            \item Vim, the "improved version" of Vi (\url{http://www.vim.org}). My editor of choice; it's by far the most efficient editor I've ever used. However, Vim is notorious for its learning curve. If you have a free weekend and feel like learning to use the editor efficiently, check out the program "vimtutor" which should be installed along with the editor (try typing \texttt{:help tutor} after starting Vim). Features include everything you'd expect from a programmer's text editor (syntax highlighting, search/replace with regexes, code folding, and diff to name a few). Built-in support for most known programming languages, often with extensions available for specific languages. Originally designed for use in a terminal, although good graphical versions are available on the download page.
-            \item (x)Emacs (\url{http://www.xemacs.org}), perhaps the more full-featured (according to some, bloated) of the two classic editors. I personally find it unusable, although if you're a boss with chained keyboard shortcuts in Word or whatever you might like this editor. Lots of programmer's features and extensions available. It even has a built-in psychologist (try \texttt{M-x doctor} or something like that). The graphical version is xEmacs.
+            \item Vim, the "improved version" of Vi (\url{http://www.vim.org}). Max's editor of choice; many people claim it's by far the most efficient editor they've ever used. However, Vim is notorious for its learning curve. If you have a free weekend and feel like learning to use the editor efficiently, check out the program "vimtutor" which should be installed along with the editor (try typing \texttt{:help tutor} after starting Vim). Features include everything you'd expect from a programmer's text editor (syntax highlighting, search/replace with regexes, code folding, and diff to name a few). Built-in support for most known programming languages, often with extensions available for specific languages. Originally designed for use in a terminal, although good graphical versions are available on the download page.
+            \item (x)Emacs (\url{http://www.xemacs.org}), perhaps the more full-featured (according to some, bloated) of the two classic editors. Some people (such as Max; now you know where he stands in the ``editor wars'') find it unusable, although if you're a boss with chained keyboard shortcuts in Word or whatever you might like this editor. Lots of programmer's features and extensions available. It even has a built-in psychologist (try \texttt{M-x doctor} or something like that). The graphical version is xEmacs.
         \end{itemize}
-        In addition, jEdit (\url{http://www.jedit.org/}) is a full-featured, cross-platform text editor with support for many programming languages. I've used it for editing Java code and found it to work well for this purpose.
+        In addition, jEdit (\url{http://www.jedit.org/}) is a full-featured, cross-platform text editor with support for many programming languages. It appears to to work well for editing Java code.
 \end{description}
 
 \subsection{IDEs by language}
 \begin{description}
-    \item[Java]
-        Eclipse (\url{http://www.eclipse.org/}) is a popular cross-platform IDE for Java and C++ development. It has all the features you'd expect from a standard IDE, plus a (somewhat clumsy) plugin installation system. It can integrate with version control systems such as Git (which we will most likely be using) through the plugin framework. It's a large piece of software -- it's several hundred megabytes and slow to start up on any system. However, many Java (and C++) programmers think the rich feature set, which includes integration with a sort of task-tracking software, is worth it. An alternative is NetBeans (\url{http://netbeans.org/}), which is definitely more lightweight than Eclipse but specializes on Java. It also has a plugin system with a large database of user-contributed plugins (Git support is naturally among them). Some programmers might find the relatively minimalistic approach of NetBeans more appealing than the one-stop-shop philosophy of Eclipse.
-    \item[C/C++]
-        As mentioned above, Eclipse also works well with C++. If you're on a Mac, you could check out XCode (it costs \$ 5 on the Mac App Store). However, it's frustrating to use for development not involving a shiny Mac application. On Windows, Visual Studio is the standard all-in-one IDE available for CSE students for free at \url{http://cselabs.umn.edu/software/msdnaa}. Although designed primarily for Windows development, it's usable for general C/C++ program development.
+    \item[Java] \hfill
+        \begin{itemize}
+            \item Eclipse (\url{http://www.eclipse.org/}) is a popular cross-platform IDE for Java and C++ development. It has all the features you'd expect from a standard IDE, plus a (somewhat clumsy) plugin installation system. It can integrate with version control systems such as Git (which we will most likely be using) through the plugin framework. It's a large piece of software -- it's several hundred megabytes and slow to start up on any system. However, many Java (and C++) programmers think the rich feature set, which includes integration with a sort of task-tracking software, is worth it. 
+            \item NetBeans (\url{http://netbeans.org/}) is definitely more lightweight than Eclipse but specializes on Java. It also has a plugin system with a large database of user-contributed plugins (Git support is naturally among them). Some programmers might find the relatively minimalistic approach of NetBeans more appealing than the one-stop-shop philosophy of Eclipse.
+        \end{itemize}
+    \item[C/C++] \hfill
+        \begin{itemize}
+            \item As mentioned above, Eclipse also works well with C++. 
+            \item If you're on a Mac, you could check out XCode (it costs \$ 5 on the Mac App Store). However, it's frustrating to use for development not involving a shiny Mac application. 
+            \item On Windows, Visual Studio is the standard all-in-one IDE available for CSE students for free at \url{http://cselabs.umn.edu/software/msdnaa}. Although designed primarily for Windows development, it's usable for general C/C++ program development.
+        \end{itemize}
     \item[C\#]
-        If we do end up using C\#, those with Windows should use the Microsoft Visual Studio IDE. Those who don't have Windows (or don't want to install it) can try the Mono development environment, see \url{http://www.monodevelop.org/}. 
-    \item[Python]
+        (If we do end up using it): 
+        \begin{itemize}
+            \item Those with Windows should use the Microsoft Visual Studio IDE. 
+            \item Those who don't have Windows (or don't want to install it) can try the Mono development environment, see \url{http://www.monodevelop.org/}. 
+        \end{itemize}
+    \item[Python] \hfill \\
         Again, we might not end up using Python at all, but if we do, here are my IDE recommendations: First, it's perfectly possible to develop Python with nothing but a text editor and terminal (that's what I do, and I prefer it to using an IDE). However, if you're used to using IDEs and want to use one for Python, there is one available: IDLE should be installed with the default Python installation (Linux users might need to install an additional package). It's about as minimalistic as IDEs get; nevetheless, it does simplify an integrate the Python development process. Users new to Python or lacking a decent command-line interface might find this helpful.
-    \item[Others]
+    \item[General] \hfill \\
+        If you like lightweight IDEs, try Geany (\url{http://www.geany.org/}). It's not tied to a specific language, which is both an advantage and a disadvantage depending on your personal preferences. In any case, it's got pretty much everything you need to edit and build most types of source code effectively.
+    \item[Others] \hfill \\
         Search the web and use your best judgement :)
 \end{description}
 
