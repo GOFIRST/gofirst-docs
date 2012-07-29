@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 
 \usepackage{fullpage}
 \usepackage{pdfsync}
@@ -37,6 +37,7 @@ This section lists the classes of languages that will be discussed in this docum
 
 \section{References}
 \label{sec:references}
+So as not to reinvent the wheel, we will be holding ourselves to some already established and well-known standards. Also includes a few humorous general tips on programming.
 \begin{itemize}
     \item Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
         This is a good, but not perfect, introduction to basic style for Java source code. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
@@ -50,13 +51,18 @@ This section lists the classes of languages that will be discussed in this docum
 
 \section{Technical Notes}
 \begin{itemize}
-\item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See Appendix \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
+    \item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See Appendix \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
     \item General Rules: We will presumably have programmers on all different systems, so if you have a choice between convenience and compatibility you should almost always choose compatibility.
 
 \end{itemize}
 
 \section{Whitespace}
 Please read the \hyperref[pyguide]{Python style guide}, sections "Code lay-out" and "Whitespace\ldots" (you can ignore the "Imports" subsection since it is Python-specific). These rules apply well both to Python and C-syntax code, so please observe them.
+
+Yes, Python is quite different from other languages in terms of handling whitespace, but I think imposing a standard on how whitespace can be used to emphasize code structure is a good thing in any programming language. For one, it quells the stupid "holy wars" on what style of indentation is preferable, or even superior. If you want a good reason to use spaces instead of tabs, consider the case of continuation of long lines of code. Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are just a recipe for disaster (different editors will throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
+
+So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
+%TODO Instuctions for various editors
 
 \appendix
 \section{Editor and IDE recommendations}
@@ -99,7 +105,7 @@ This section lists some text editors and Integrated Development Environments (ID
             \item Those who don't have Windows (or don't want to install it) can try the Mono development environment, see \url{http://www.monodevelop.org/}. 
         \end{itemize}
     \item[Python] \hfill \\
-        Again, we might not end up using Python at all, but if we do, here are my IDE recommendations: First, it's perfectly possible to develop Python with nothing but a text editor and terminal (that's what I do, and I prefer it to using an IDE). However, if you're used to using IDEs and want to use one for Python, there is one available: IDLE should be installed with the default Python installation (Linux users might need to install an additional package). It's about as minimalistic as IDEs get; nevetheless, it does simplify an integrate the Python development process. Users new to Python or lacking a decent command-line interface might find this helpful.
+        Again, we might not end up using Python at all, but if we do, here are my IDE recommendations: First, it's perfectly possible to develop Python with nothing but a text editor and terminal (that's what I do, and I prefer it to using an IDE). However, if you're used to using IDEs and want to use one for Python, there is one available: IDLE should be installed with the default Python installation (Linux users might need to install an additional package). It's about as minimalistic as IDEs get; nevetheless, it does simplify and integrate the Python development process. Users new to Python or lacking a decent command-line interface might find this helpful.
     \item[General] \hfill \\
         If you like lightweight IDEs, try Geany (\url{http://www.geany.org/}). It's not tied to a specific language, which is both an advantage and a disadvantage depending on your personal preferences. In any case, it's got pretty much everything you need to edit and build most types of source code effectively.
     \item[Others] \hfill \\
