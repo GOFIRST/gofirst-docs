@@ -1,14 +1,52 @@
 \documentclass[12pt]{article}
 
-\usepackage{fullpage}
 \usepackage{pdfsync}
 \usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{times}
 \usepackage[defaultmono]{droidmono}
 
 % Custom stylistic preferences
 \usepackage{parskip}
+\hypersetup{
+colorlinks=true,
+urlcolor=cyan,
+filecolor=blue,
+linkcolor=blue,
+citecolor=blue
+}
+
+% Set GO FIRST template style
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage{framed}
+\setlength{\topmargin}{0pt}
+\setlength{\headheight}{20pt}
+\setlength{\headsep}{20pt}
+\setlength{\textheight}{580pt}
+\pagestyle{fancy}
+
+\fancyhf{}
+\lhead{
+    \includegraphics{HeaderLogo}
+}
+\rhead{
+    GO FIRST Source Code Conventions \\ % There's got to be a better way to do this.
+    \today
+}
+\lfoot{
+The information contained within this document \\ 
+is property of GO FIRST. ® All rights reserved.
+}
+\rfoot{Page \textbf{\thepage} of \pageref{LastPage}}
+
+\newcommand{\boxsection}[1]{\begin{framed}#1\end{framed}}
+\titleformat{\section}[hang]{\large\bfseries}{Section \thesection}{1em}{\boxsection}
 
 \begin{document}
 \title{GO FIRST Source Code Conventions}
@@ -18,6 +56,7 @@ GO FIRST Project Manager \#2}
 
 \maketitle
 \tableofcontents
+\thispagestyle{fancy}
 
 \section{Purpose and Audience}
 The purpose of this document is to establish a uniform style of writing source code for all programs written for GO FIRST. This is intended to facilitate collaboration between programmers as well as maintainability of software, since a uniform style removes one of the main barriers to understanding the source code written by others (or even yourself!). 
