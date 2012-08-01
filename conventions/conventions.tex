@@ -44,9 +44,9 @@ The information contained within this document \\
 is property of GO FIRST. ® All rights reserved.
 }
 \rfoot{Page \textbf{\thepage} of \pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.4pt}
 
-\newcommand{\boxsection}[1]{\begin{framed}#1\end{framed}}
-\titleformat{\section}[hang]{\large\bfseries}{Section \thesection}{1em}{\boxsection}
+\titleformat{\section}[frame]{\large\bfseries}{}{10pt}{\thesection . \quad}
 
 \begin{document}
 \title{GO FIRST Source Code Conventions}
