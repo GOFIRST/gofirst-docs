@@ -48,6 +48,8 @@ is property of GO FIRST. ® All rights reserved.
 
 \titleformat{\section}[frame]{\large\bfseries}{}{10pt}{\thesection . \quad}
 
+\newcommand{\code}[1]{\texttt{#1}}
+
 \begin{document}
 \title{GO FIRST Source Code Conventions}
 \author{Max Veit\\
@@ -79,7 +81,7 @@ This section lists the classes of languages that will be discussed in this docum
 So as not to reinvent the wheel, we will be holding ourselves to some already established and well-known standards. Also includes a few humorous general tips on programming.
 \begin{itemize}
     \item Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
-        This is a good, but not perfect, introduction to basic style for Java source code. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
+        This is a good, but not perfect, introduction to basic style for Java source code. It provides a guide for the general ``cosmetics'' of source code files in C-like languages so programmers don't have to fight with something as trivial and infuriating as brace placement. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
     \item \label{pyguide} Style Guide for Python Code: \url{http://www.python.org/dev/peps/pep-0008/} \\
         A very good guide for Python code with general advice that applies to other programming languages as well. Please at least read the introduction, first section, and section on comments. If we do any coding in Python, the style should follow this guide. Comments in other languages should follow the advice in this guide; for all other areas the language's style guide naturally has precedence.
     \item Pasta Code: \url{http://www.gnu.org/fun/jokes/pasta.code.html} \\
@@ -88,20 +90,33 @@ So as not to reinvent the wheel, we will be holding ourselves to some already es
         Please try to stay in the "Code Well" loop. Yes, requirements do change, and we've had to throw out a few projects because of this, but trust me: this is not always the case!
 \end{itemize}
 
+\section{Modifications to the Java Style Guide}
+There are a few topics where the Java style guide provides advice that is either unsuited to the GO FIRST software development model or actually hurts the readability of code.
+
 \section{Technical Notes}
 \begin{itemize}
     \item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See Appendix \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
+    \item Line Length: 79 characters is the \emph{maximum} amount of characters allowed in one line of source code. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. \\
+        The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
     \item General Rules: We will presumably have programmers on all different systems, so if you have a choice between convenience and compatibility you should almost always choose compatibility.
 
 \end{itemize}
 
 \section{Whitespace}
+\label{sec:spacing}
 Please read the \hyperref[pyguide]{Python style guide}, sections "Code lay-out" and "Whitespace\ldots" (you can ignore the "Imports" subsection since it is Python-specific). These rules apply well both to Python and C-syntax code, so please observe them.
 
 Yes, Python is quite different from other languages in terms of handling whitespace, but I think imposing a standard on how whitespace can be used to emphasize code structure is a good thing in any programming language. For one, it quells the stupid "holy wars" on what style of indentation is preferable, or even superior. If you want a good reason to use spaces instead of tabs, consider the case of continuation of long lines of code. Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are just a recipe for disaster (different editors will throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
 
 So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
 %TODO Instuctions for various editors
+
+\section{General Recommendations}
+\begin{itemize}
+    \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
+        \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
+    \item ``Magic Numbers:'' It's generally considered bad practice to embed numbers other than 0, 1, 2, or -1 directly into a program's control flow, rather than as constants at the global, file, or class level. Other numbers (integers!) that are tied closely with the structure of the surrounding code block (for instance, as an increment for a step of a specific algorithm) are exempt from this rule \emph{if} this use is documented with a comment briefly explaining the significance of the value. Just writing a statement like \code{increment = sensorLevel * 67} (example in Java) will leave anyone else who reads the code scratching their head trying to figure out just what on Earth the value 67 even \emph{means} in this context. Even worse, if the value 67 is used at multiple points throughout the code, and tests determine that a value of 72 gives more accurate results, replacing every single occurrence of the value would be a pain. And no, find-and-replace is often not an option if the example were using a more common value, such as 4, which you really wouldn't want to replace throughout your project. It would be much better to first declare 67 as a constant at the top of the class: \code{public static final int sensorScaling = 67}, then using \code{increment = sensorLevel * sensorScaling}. This way, the semantics of the sensor scaling value are made a bit more clear (and can be made even more clear by a comment next to the constant). Also, changing the scaling to 72 is nearly trivial, and tuning this value experimentally is much easier than it would be in the previous example.
+\end{itemize}
 
 \appendix
 \section{Editor and IDE recommendations}
