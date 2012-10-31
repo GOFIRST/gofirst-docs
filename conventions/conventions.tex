@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{times}
+\usepackage{droid}
 \usepackage[defaultmono]{droidmono}
 
 % Custom stylistic preferences
@@ -40,8 +40,8 @@ citecolor=blue
     \today
 }
 \lfoot{
-The information contained within this document \\ 
-is property of GO FIRST. ® All rights reserved.
+\footnotesize{The information contained within this document \\ 
+is property of GO FIRST. ® All rights reserved.}
 }
 \rfoot{Page \textbf{\thepage} of \pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
@@ -49,22 +49,33 @@ is property of GO FIRST. ® All rights reserved.
 \titleformat{\section}[frame]{\large\bfseries}{}{10pt}{\thesection . \quad}
 
 \newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\var}[1]{\texttt{#1}}
+\newcommand{\commandline}[1]{\texttt{\$ #1}}
+\newcommand{\clloption}[1]{-{}-#1}
+\newcommand{\toreplace}[1]{\emph{#1}}
 
 \begin{document}
 \title{GO FIRST Source Code Conventions}
 \author{Max Veit\\
-GO FIRST Project Manager \#2}
+GO FIRST Software Project Lead}
 \date{Last Updated: \today}
 
 \maketitle
 \tableofcontents
 \thispagestyle{fancy}
 
-\section{Purpose and Audience}
+\section{Introduction}
+\subsection{Purpose and Audience}
 The purpose of this document is to establish a uniform style of writing source code for all programs written for GO FIRST. This is intended to facilitate collaboration between programmers as well as maintainability of software, since a uniform style removes one of the main barriers to understanding the source code written by others (or even yourself!). 
 
 This document is aimed at anybody interested in writing programs that will become a part of or aid GO FIRST projects. It assumes only a basic, general knowledge of programming, including the existence of different programming languages, the purpose of a source code file, and the existence of a language-specific syntax for the text contained therein. However, the style guides in Section \ref{sec:references} do assume a basic familiarity with the specific syntax of the language being described. To better understand these guides it might be helpful to find a simple introductory tutorial in the language and its syntactic constructs (such as function definitions, ``if,'' and ``for'' constructs).
 
+\subsection{Typographic Conventions}
+Source code, variable names, command lines, and anything else that is only correct exactly as it appears (including spaces) will be shown in a \texttt{monospaced font}.
+
+Commands you type at the operating system command line interface (ordinary terminal in Unix or GNU/Linux, Git Bash or Cygwin prompt in Windows) will be prefixed with a \commandline{} symbol. You should not actually type the \texttt{\$} or the space that follows it. It is only shown in this document to remind you that the text after it is a command (you should also see something like it in the actual terminal; the symbol is called the ``prompt''). When you actually type the command, enter everything from the first word after the \texttt{\$} onwards (including spaces!).
+
+If there is something in one of these command lines or program snippets you need to fill in yourself it will be indicated by emphasis. For example, \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"} means you should replace \toreplace{Your Name} with your actual name (but leave the quotes as they are; those aren't emphasized).
 \section{Language Classes}
 This section lists the classes of languages that will be discussed in this document.
 \begin{description}
@@ -93,11 +104,21 @@ So as not to reinvent the wheel, we will be holding ourselves to some already es
 \section{Modifications to the Java Style Guide}
 There are a few topics where the Java style guide provides advice that is either unsuited to the GO FIRST software development model or actually hurts the readability of code.
 
+\emph{Note:} This section will be filled out soon.
+
 \section{Technical Notes}
 \begin{itemize}
     \item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See Appendix \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
+
+        \emph{Update:} The Git version control system includes transparent handling for this issue. If you are working on Windows, make sure you set Git's \var{core.autocrlf} setting to \var{true} (You can do this by typing \commandline{git config \clloption{global} core.autocrlf true} into the Git Bash prompt).
     \item Line Length: 79 characters is the \emph{maximum} amount of characters allowed in one line of source code. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. \\
         The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
+    \item Git setup: Please set up your Git settings so that your commits are tagged with your name and email. This is useful if we want to know who made a certain change e.g. to find out what it was intended to do. You can set this up by typing:
+
+        \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"}\\
+        \commandline{git config \clloption{global} user.email \toreplace{your.address@emaildomain.whatever}}
+
+    into the Unix or Git Bash command line.
     \item General Rules: We will presumably have programmers on all different systems, so if you have a choice between convenience and compatibility you should almost always choose compatibility.
 
 \end{itemize}
@@ -116,6 +137,7 @@ So please, for the sake of consistency, set your editor to expand tabs to spaces
     \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
         \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
     \item ``Magic Numbers:'' It's generally considered bad practice to embed numbers other than 0, 1, 2, or -1 directly into a program's control flow, rather than as constants at the global, file, or class level. Other numbers (integers!) that are tied closely with the structure of the surrounding code block (for instance, as an increment for a step of a specific algorithm) are exempt from this rule \emph{if} this use is documented with a comment briefly explaining the significance of the value. Just writing a statement like \code{increment = sensorLevel * 67} (example in Java) will leave anyone else who reads the code scratching their head trying to figure out just what on Earth the value 67 even \emph{means} in this context. Even worse, if the value 67 is used at multiple points throughout the code, and tests determine that a value of 72 gives more accurate results, replacing every single occurrence of the value would be a pain. And no, find-and-replace is often not an option if the example were using a more common value, such as 4, which you really wouldn't want to replace throughout your project. It would be much better to first declare 67 as a constant at the top of the class: \code{public static final int sensorScaling = 67}, then using \code{increment = sensorLevel * sensorScaling}. This way, the semantics of the sensor scaling value are made a bit more clear (and can be made even more clear by a comment next to the constant). Also, changing the scaling to 72 is nearly trivial, and tuning this value experimentally is much easier than it would be in the previous example.
+%TODO Overcommenting, self-documenting code, and premature optimization are all ripe topics
 \end{itemize}
 
 \appendix
