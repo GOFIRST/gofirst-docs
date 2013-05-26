@@ -61,7 +61,9 @@ The caller will expect this function to return immediately.
 
 In both synchronous and asynchronous operation, specific items of data may be
 accessed using the function named:
+
     <type> get<Description>()
+
 Where `<type>` is the datatype of the data item accessed, and `<Description>`
 is a short CamelCase description of the data item that will be returned. For
 example, the function `double getHeading()` is expected to return the current
@@ -71,7 +73,9 @@ it is obvious what will be returned. Of course, the type, format, and meaning
 of the returned data must always be documented, preferably in the header file!
 
 One specific function that all sensor interfaces should implement is:
+
     timeval getTimeStamp()
+
 The caller may want the timestamp to determine, for example, how recent a
 certain set of sensor data is. Note the use of the `timeval` type, which has
 nominally microsecond precision. This type is defined in `sys/time.h`, along
@@ -103,8 +107,10 @@ The second strategy, which may be used _as an alternative_ to the first in the
 case where the first strategy is somehow inconvenient or undesirable to
 implement, is to provide a set of functions that protect the callee's cache
 from modification. The functions are:
+
     void acquireLock();
     void releaseLock();
+
 Between the calls of `acquireLock()` and `releaseLock()`, the `get<Data>()`
 functions must return the same values, regardless of when or how many times
 they are called. Implementations must ensure that any new data received while
@@ -126,7 +132,7 @@ updated.
 All function names in the sensor interface are to be spelled in camel-case with
 the initial letter uncapitalized, as in `getTimeStamp`. This convention is the
 prevailing one in the codebase and is a valid C++ convention that is often in
-use. While the convention with an initial uppercase letter (cf. 'GetTimeStamp`)
+use. While the convention with an initial uppercase letter (cf. `GetTimeStamp`)
 is also in use and is perhaps more common, the former convention should be used
 in the interest of uniformity.
 
