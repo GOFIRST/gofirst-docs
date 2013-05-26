@@ -54,8 +54,12 @@ being retrieved. This feature is also called 'pipelined operation'.
 
 In asynchronous operation, the caller may initiate an update of the sensor data
 by calling the function with the C++ signature:
+
     void readData()
-The caller will expect this function to return immediately.
+
+The caller will expect this function to return immediately. This function is
+not expected to return any data; it is only a signal for the interface to
+refresh its internal cache.
 
 ##Accessing Data##
 
