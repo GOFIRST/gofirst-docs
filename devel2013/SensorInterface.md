@@ -13,8 +13,8 @@ the code, the one that I see as the prevailing convention will be chosen.
 
 The conventions established here _may_ be changed if they are found to ignore an
 already-established convention set in the code that I somehow missed. In the
-case that no convention exists, I will set one that best fits with the existing
-conventions.
+case that no convention exists where one is needed, I will set one that best
+fits with the existing conventions.
 
 Comments, questions, clarifications, and other requests and addenda may be
 emailed to Max Veit.
@@ -82,6 +82,10 @@ nominally microsecond precision. This type is defined in `sys/time.h`, along
 with the function `int gettimeofday(timeval *tv, timezone *tz)`, which
 returns the current time with approximately 0.01-second precision.
 
+In blocking operation, the `get<Data>()` functions are expected to take as long
+to complete and return as is necessary to fetch the data. In asynchronous
+operation, they are expected to return immediately.
+
 ###Issues with Asynchronous Operation###
 
 The main potential issue with asynchronous sensor operation is the possibility
@@ -127,7 +131,23 @@ this problem somewhat by simply having the callee return the latest cached
 version of the data regardless of whether the sensor data is currently being
 updated.
 
-##Case of Function Names##
+###Naming for Serial and Asynchronous Operation###
+
+In most cases, the sensor interfaces should support either serial operation or
+asynchronous operation, but usually not both. Which mode is being used should
+be _clearly documented_ in the header file for the class (the preferred place
+for high-level source-code documentation), both in the class documentation and
+as a note in the documentation of the individual `get<Data>()` functions.
+
+In the case that a sensor interface needs to support both modes, all `get<Data>`
+function names should be suffixed with either the word `Blking` to indicate
+that it is a serial or blocking function, or with `Async` to indicate that the
+function operates asynchronously. Naturally, the header-file documentation for
+each function should also mention which mode that function uses. Ideally, each
+`get<Data>()` function would be implemented as both blocking and asynchronous
+versions in such interface classes.
+
+##Capitalization of Function Names##
 
 All function names in the sensor interface are to be spelled in camel-case with
 the initial letter uncapitalized, as in `getTimeStamp`. This convention is the
