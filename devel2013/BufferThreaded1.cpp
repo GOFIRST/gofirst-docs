@@ -83,8 +83,8 @@ class BufferThreaded {
     }
 
     int getData(int** dataIn) {
-        // These lock/unlock statements MUST be here.
-        // This is a critical section.
+        // All data-access sections must have these lock/unlock guards.
+        // They protect against access to the data while it is being modified.
         pthread_mutex_lock(&data_mtx);
         *dataIn = new int[numItems];
         for (int i = 0; i < numItems; i++) {
@@ -132,6 +132,19 @@ class BufferThreaded {
                  */
 
                 // Communicate with the sensor
+                /* This simulates sensor latency -- remove in actual code!
+                 */
+                sleep(5);
+
+                /* Keep the section in between the lock guards as short and
+                 * fast as possible. It should consist only of copying the data
+                 * received from the sensor into the internal buffer variables.
+                 *
+                 * The reason is that other threads (like the main thread) may
+                 * want to access data using the get-functions while this
+                 * update is happening. If the locked section takes too long,
+                 * that thread will be made to wait, which is not a good thing.
+                 */
                 pthread_mutex_lock(&data_mtx);
                 // Update cached data
                 delete[] data;
