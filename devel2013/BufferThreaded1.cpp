@@ -31,6 +31,27 @@ class BufferThreaded {
     }
 
     public:
+    BufferThreaded() {
+        // Multithreading construct initialization and thread spawning
+        pthread_mutex_init(&upfl_mtx, NULL);
+        pthread_mutex_init(&data_mtx, NULL);
+        pthread_cond_init(&read_cond, NULL);
+
+        pthread_create(&read_thread, NULL, &threadCB, this);
+
+        bUpdating = false;
+        numItems = 0;
+    }
+
+    ~BufferThreaded() {
+        // Stop the thread and take care of the extra pthreads destruction
+        // requirements
+        pthread_cancel(read_thread);
+
+        pthread_cond_destroy(&read_cond);
+        pthread_mutex_destroy(&data_mtx);
+        pthread_mutex_destroy(&upfl_mtx);
+    }
 
     int getData(int** dataIn) {
         // These lock/unlock statements MUST be here.
@@ -66,7 +87,13 @@ class BufferThreaded {
         }
     }
 
-    void *threadMeth() { // Called from static callback function
+    /**
+     * The updater thread function. This function is not meant to return; it
+     * simply runs until canceled.
+     *
+     * It is called from a static callback function.
+     */
+    void* threadMeth() {
         while (true) {
             pthread_mutex_lock(&upfl_mtx);
             pthread_cond_wait(&read_cond, &upfl_mtx);
@@ -84,6 +111,18 @@ class BufferThreaded {
             pthread_mutex_unlock(&upfl_mtx);
         }
     }
+
+    /**
+     * Boilerplate callback function for thread creation
+     * (pthread_create needs a static function)
+     *
+     * Takes as an argument the object on which the main thread method
+     * threadMeth() should be called.
+     */
+    static void* threadCB(void* arg) {
+        return static_cast<BufferThreaded*>(arg)->threadMeth();
+    }
+
 }
 
 
