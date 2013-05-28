@@ -6,6 +6,14 @@ using boost::function;
 using boost::bind;
 
 /**
+ * Wrapper for interfacing with C-style pthreads library (so C linkage may or
+ * may not be required for callbacks)
+ *
+ * The parameter arg should always be of type boost::function<void*()>* .
+ */
+extern "C" void* pthreadWrapper(void* arg);
+
+/**
  * Demonstrative example for asynchronous sensor updating with a separate
  * thread for the sensor communication and data retrieval and processing
  * operations. Uses condition variables and ensures thread-safety.
@@ -44,8 +52,6 @@ class BufferThreaded {
         pthread_mutex_init(&upfl_mtx, NULL);
         pthread_mutex_init(&data_mtx, NULL);
         pthread_cond_init(&read_cond, NULL);
-
-        pthread_create(&read_thread, NULL, &threadCB, this);
 
         bUpdating = false;
         numItems = 0;
@@ -135,15 +141,11 @@ class BufferThreaded {
             pthread_mutex_unlock(&upfl_mtx);
         }
     }
-}
+};
 
-/**
- * Wrapper for interfacing with C-style pthreads library (so C linkage may or
- * may not be required for callbacks)
- *
- * The parameter arg should always be of type boost::function<void*()>* .
+/* Definition of the callback function.
  */
-extern "C" void* pthreadWrapper(void* arg) {
+void* pthreadWrapper(void* arg) {
     // Aaugh! My eyes!
     function<void* ()>* tFun = static_cast<function<void* ()>* >(arg);
     return (*tFun)();
