@@ -1,9 +1,17 @@
 #include <pthread.h>
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
+using boost::function;
+using boost::bind;
 
 /**
  * Demonstrative example for asynchronous sensor updating with a separate
  * thread for the sensor communication and data retrieval and processing
  * operations. Uses condition variables and ensures thread-safety.
+ *
+ * The extra thread is started by calling spawnThreads(). It is stopped by
+ * destroying the BufferThreaded object.
  *
  * If you use this, please copy the declarations to a separate header file so
  * your class can be included by others.
@@ -41,6 +49,7 @@ class BufferThreaded {
 
         bUpdating = false;
         numItems = 0;
+        data = NULL;
     }
 
     ~BufferThreaded() {
@@ -51,6 +60,20 @@ class BufferThreaded {
         pthread_cond_destroy(&read_cond);
         pthread_mutex_destroy(&data_mtx);
         pthread_mutex_destroy(&upfl_mtx);
+
+        // Just to be sure...
+        delete[] data;
+    }
+
+    /**
+     * This should be called to start the background sensor-communication
+     * threads; ideally, this would be called before the first invocation
+     * of readData().
+     */
+    void spawnThreads() {
+        function<void*()> thrFun = bind(&BufferThreaded::threadMeth, this);
+        function<void*()>* tfPersistent = new function<void*()>(thrFun);
+        pthread_create(&read_thread, NULL, &pthreadWrapper, tfPersistent);
     }
 
     int getData(int** dataIn) {
@@ -66,7 +89,7 @@ class BufferThreaded {
     }
 
     bool isUpdating() {
-        // This silly dance is required for thread safety.
+        // This silly dance helps ensure thread safety.
         bool retval;
         pthread_mutex_lock(&upfl_mtx);
         retval = bUpdating;
@@ -91,7 +114,7 @@ class BufferThreaded {
      * The updater thread function. This function is not meant to return; it
      * simply runs until canceled.
      *
-     * It is called from a static callback function.
+     * It is called from an external wrapper function.
      */
     void* threadMeth() {
         while (true) {
@@ -105,28 +128,24 @@ class BufferThreaded {
                 // Communicate with the sensor
                 pthread_mutex_lock(&data_mtx);
                 // Update cached data
+                delete[] data;
                 numItems = readFromSensor(&data);
                 pthread_mutex_unlock(&data_mtx);
             }
             pthread_mutex_unlock(&upfl_mtx);
         }
     }
-
-    /**
-     * Boilerplate callback function for thread creation
-     * (pthread_create needs a static function)
-     *
-     * Takes as an argument the object on which the main thread method
-     * threadMeth() should be called.
-     */
-    static void* threadCB(void* arg) {
-        return static_cast<BufferThreaded*>(arg)->threadMeth();
-    }
-
 }
 
-
-
-
-
+/**
+ * Wrapper for interfacing with C-style pthreads library (so C linkage may or
+ * may not be required for callbacks)
+ *
+ * The parameter arg should always be of type boost::function<void*()>* .
+ */
+extern "C" void* pthreadWrapper(void* arg) {
+    // Aaugh! My eyes!
+    function<void* ()>* tFun = static_cast<function<void* ()>* >(arg);
+    return (*tFun)();
+}
 
