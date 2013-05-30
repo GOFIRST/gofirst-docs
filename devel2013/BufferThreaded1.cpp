@@ -39,6 +39,7 @@ class BufferThreaded {
     int *data;
     int numItems;
     struct timeval tStamp;
+    function<void*()>* tfPersistent = NULL;
 
     int readFromSensor(int** dataIn) {
         // Dummy data-filling method.
@@ -60,6 +61,7 @@ class BufferThreaded {
         bUpdating = false;
         numItems = 0;
         data = NULL;
+        gettimeofday(&tStamp, NULL);
     }
 
     /**
@@ -71,13 +73,12 @@ class BufferThreaded {
      * This will need to be customized to copy all the data items in the
      * individual buffer classes. If you don't want to do that, remove this
      * constructor.
-     *
-     * WARNING UNTESTED
      */
-    BufferThreaded(const BufferThreaded &other) {
+    BufferThreaded(BufferThreaded& other) {
         pthread_mutex_lock(&(other.data_mtx));
         // Copy the data buffer
         numItems = other.numItems;
+        data = new int[numItems];
         for (int i = 0; i < numItems; i++) {
             data[i] = other.data[i];
         }
@@ -104,6 +105,7 @@ class BufferThreaded {
         pthread_mutex_destroy(&data_mtx);
         pthread_mutex_destroy(&upfl_mtx);
 
+        delete tfPersistent;
         // Just to be sure...
         delete[] data;
     }
@@ -114,11 +116,12 @@ class BufferThreaded {
      * of readData().
      *
      * This function should only be called once per object. The result of
-     * multiple invocations on a single object is undefined.
+     * multiple invocations on a single object is undefined and may cause
+     * memory leaks.
      */
     void spawnThreads() {
         function<void*()> thrFun = bind(&BufferThreaded::threadMeth, this);
-        function<void*()>* tfPersistent = new function<void*()>(thrFun);
+        tfPersistent = new function<void*()>(thrFun);
         pthread_create(&read_thread, NULL, &pthreadWrapper, tfPersistent);
     }
 
@@ -148,7 +151,7 @@ class BufferThreaded {
          *
          * Yes, this is just a read of a boolean variable, but without the
          * locks there is no guarantee that this read instruction won't be
-         * reordered by an aggressively optimizing compiler to some point that
+         * reordered by an aggressively optimizing compiler to some place that
          * makes the program's semantics invalid.
          *
          * Trust me, multi-threading is tricky business.
@@ -229,7 +232,7 @@ class BufferThreaded {
                 pthread_mutex_unlock(&upfl_mtx);
             }
         }
-        // We'll never get here, but whatever.
+        // We'll never get here, but whatever keeps the compiler happy.
         return NULL;
     }
 };
@@ -243,9 +246,9 @@ class BufferThreaded {
 void* pthreadWrapper(void* arg) {
     // Aaugh! My eyes!
     function<void* ()>* tFun = static_cast<function<void* ()>* >(arg);
-    void* retval = (*tFun)();
-    delete(tFun);
-    return retval;
+    // The responsibility for destruction of tFun lies with the class that
+    // created it (destructor).
+    return (*tFun)();
 }
 
 /**
@@ -257,7 +260,9 @@ int main(int argc, char** argv) {
     char cmd;
     int *data;
     int numItems;
+    timeval tStamp;
     BufferThreaded* buf;
+    BufferThreaded* newBuf;
     buf = new BufferThreaded();
     buf->spawnThreads();
     while (bContinue) {
@@ -285,6 +290,7 @@ int main(int argc, char** argv) {
             }
             cout << "]" << endl;
             // Print the timestamp as well.
+            tStamp = buf->getTimeStamp();
             cout << "Timestamp: " << ctime(&(tStamp.tv_sec)) << tStamp.tv_usec <<
                 " ms" << endl;
             delete(data);
@@ -296,9 +302,10 @@ int main(int argc, char** argv) {
         case 'c':
             // Test the copy-constructor.
             cout << "Copying buffer." << endl;
-            BufferThreaded *newBuf = new BufferThreaded(buf);
+            newBuf = new BufferThreaded(*buf);
             delete(buf);
-            newBuf->spawnThreads();
+            buf = newBuf;
+            buf->spawnThreads();
             // Now the user should check to make sure the data stayed intact.
             break;
         case 'r':
