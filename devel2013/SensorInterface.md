@@ -161,6 +161,8 @@ is also in use and is perhaps more common, the former convention should be used
 in the interest of uniformity.
 
 Class names should, as always, be spelled in camel-case with the initial letter
-capitalized, as in `SabertoothPacket`.
-
+capitalized, as in `SabertoothPacket`. This has always been standard C++
+practice; please don't use the underscore\_names convention that makes classes
+look like ordinary variables. To reiterate: All newly-created classes should
+follow the UpperCamelCase convention.
 
