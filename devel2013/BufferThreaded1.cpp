@@ -2,6 +2,7 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <unistd.h>
+#include <sys/time.h>
 
 using boost::function;
 using boost::bind;
@@ -37,6 +38,7 @@ class BufferThreaded {
     bool bUpdating;
     int *data;
     int numItems;
+    struct timeval tStamp;
 
     int readFromSensor(int** dataIn) {
         // Dummy data-filling method.
@@ -60,6 +62,38 @@ class BufferThreaded {
         data = NULL;
     }
 
+    /**
+     * Copy-constructor, in case it is needed.
+     * Note that this only copies the contents of the buffer, not the threading
+     * state. It will still be necessary to call spawnThreads() on the newly
+     * constructed object in order to make it function properly.
+     *
+     * This will need to be customized to copy all the data items in the
+     * individual buffer classes. If you don't want to do that, remove this
+     * constructor.
+     *
+     * WARNING UNTESTED
+     */
+    BufferThreaded(const BufferThreaded &other) {
+        pthread_mutex_lock(&(other.data_mtx));
+        // Copy the data buffer
+        numItems = other.numItems;
+        for (int i = 0; i < numItems; i++) {
+            data[i] = other.data[i];
+        }
+        // Copy the timestamp
+        tStamp = other.tStamp;
+        pthread_mutex_unlock(&(other.data_mtx));
+
+        // And initialize the local threading constructs
+        pthread_mutex_init(&upfl_mtx, NULL);
+        pthread_mutex_init(&data_mtx, NULL);
+        pthread_cond_init(&read_cond, NULL);
+
+        bUpdating = false;
+    }
+
+
     ~BufferThreaded() {
         // Stop the thread and take care of the extra pthreads destruction
         // requirements
@@ -78,6 +112,9 @@ class BufferThreaded {
      * This should be called to start the background sensor-communication
      * threads; ideally, this would be called before the first invocation
      * of readData().
+     *
+     * This function should only be called once per object. The result of
+     * multiple invocations on a single object is undefined.
      */
     void spawnThreads() {
         function<void*()> thrFun = bind(&BufferThreaded::threadMeth, this);
@@ -86,8 +123,9 @@ class BufferThreaded {
     }
 
     int getData(int** dataIn) {
-        // All data-access sections must have these lock/unlock guards.
-        // They protect against access to the data while it is being modified.
+        /* All data-access sections must have these lock/unlock guards.
+         * They protect against access to the data while it is being modified.
+         */
         pthread_mutex_lock(&data_mtx);
         *dataIn = new int[numItems];
         for (int i = 0; i < numItems; i++) {
@@ -97,8 +135,24 @@ class BufferThreaded {
         return numItems;
     }
 
+    timeval getTimeStamp() {
+        timeval retval;
+        pthread_mutex_lock(&data_mtx);
+        retval = tStamp;
+        pthread_mutex_unlock(&data_mtx);
+        return retval;
+    }
+
     bool isUpdating() {
-        // This silly dance helps ensure thread safety.
+        /* This silly dance helps ensure thread safety.
+         *
+         * Yes, this is just a read of a boolean variable, but without the
+         * locks there is no guarantee that this read instruction won't be
+         * reordered by an aggressively optimizing compiler to some point that
+         * makes the program's semantics invalid.
+         *
+         * Trust me, multi-threading is tricky business.
+         */
         bool retval;
         pthread_mutex_lock(&upfl_mtx);
         retval = bUpdating;
@@ -127,13 +181,14 @@ class BufferThreaded {
      */
     void* threadMeth() {
         bool bUpl; // Thread-local updating flag
+        timeval tStampl; // Thread-local timestamp
         while (true) {
             pthread_mutex_lock(&upfl_mtx);
             pthread_cond_wait(&read_cond, &upfl_mtx);
             /* Keep the critical section as short as possible (we don't want
              * to block callers of isUpdating() ).
              */
-            bool bUpl = bUpdating;
+            bUpl = bUpdating;
             pthread_mutex_unlock(&upfl_mtx);
 
             if (bUpl) { // Is it OK to proceed?
@@ -145,6 +200,8 @@ class BufferThreaded {
                 /* This simulates sensor latency -- remove in actual code!
                  */
                 sleep(5);
+                // Get the timestamp and store it locally
+                gettimeofday(&tStampl, NULL);
 
                 /* Keep the section in between the lock guards (i.e. the
                  * "critical section") as short and fast as possible. It should
@@ -160,7 +217,11 @@ class BufferThreaded {
                 // Update cached data
                 delete[] data;
                 numItems = readFromSensor(&data);
+                tStamp = tStampl;
                 pthread_mutex_unlock(&data_mtx);
+
+                // Pthreads should ensure that these two code blocks are not
+                // reordered with respect to each other.
 
                 // Report that we are done updating.
                 pthread_mutex_lock(&upfl_mtx);
@@ -168,15 +229,23 @@ class BufferThreaded {
                 pthread_mutex_unlock(&upfl_mtx);
             }
         }
+        // We'll never get here, but whatever.
+        return NULL;
     }
 };
 
-/* Definition of the callback function.
+/**
+ * Definition of the callback function.
+ *
+ * Note that this should only occur once in the final repository. Place the
+ * definition of this function somewhere separate from the buffer class.
  */
 void* pthreadWrapper(void* arg) {
     // Aaugh! My eyes!
     function<void* ()>* tFun = static_cast<function<void* ()>* >(arg);
-    return (*tFun)();
+    void* retval = (*tFun)();
+    delete(tFun);
+    return retval;
 }
 
 /**
@@ -199,7 +268,7 @@ int main(int argc, char** argv) {
             buf->spawnThreads();
         }
         cout << "Please enter a command out of " <<
-            "{\'u\', \'g\', \'i\', \'r\', \'q\'}: ";
+            "{\'u\', \'g\', \'i\', \'c\', \'r\', \'q\'}: ";
         cin >> cmd;
         cout << endl;
         switch (cmd) {
@@ -215,11 +284,22 @@ int main(int argc, char** argv) {
                 cout << data[i] << ", ";
             }
             cout << "]" << endl;
+            // Print the timestamp as well.
+            cout << "Timestamp: " << ctime(&(tStamp.tv_sec)) << tStamp.tv_usec <<
+                " ms" << endl;
             delete(data);
             break;
         case 'i':
             // Inquiry, isUpdating.
             cout << "Updating: " << buf->isUpdating() << endl;
+            break;
+        case 'c':
+            // Test the copy-constructor.
+            cout << "Copying buffer." << endl;
+            BufferThreaded *newBuf = new BufferThreaded(buf);
+            delete(buf);
+            newBuf->spawnThreads();
+            // Now the user should check to make sure the data stayed intact.
             break;
         case 'r':
             // Reset state.
