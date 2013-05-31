@@ -50,6 +50,44 @@ providing the caller with the previous copy of the data, so at any given
 moment, the system is working on one copy of the data while the next one is
 being retrieved. This feature is also called 'pipelined operation'.
 
+##Packetized Asynchronous Operation (UPDATE)##
+
+Many of the problems detailed in the next section can be resolved by returning
+the sensor data in a single packet, which should be a fully-functional object
+with all the `get<Data>` methods detailed below. Depending on the
+implementation, the sensor interface class may also choose not to expose a
+`readData()` method and instead update on its own timed schedule. The interface
+must only expose the method:
+
+    <PacketType> getPacket()
+
+which returns a copy (!) of the latest set of data received from the sensor.
+The type `<PacketType>` is a suitable container for the data, and must expose
+the `get<Data>()` methods detailed below, including `getTimeStamp()`. If the
+data returned is large enough, the interface may choose to use the
+pass-by-reference approach instead, in which case the signature becomes
+`<PacketType>* getPacket()`. Note, however, that the returned reference must
+be to an object allocated with `new` (so that the returned packet is a
+persistent copy of the data with lifetime determined by the caller, not the
+callee). This also means that the caller _must_ destroy the returned packet
+with `delete` when it is finished in order to avoid memory leaks.
+
+On the other hand, if the packet will be passed by value (first approach), the
+packet must have copy-constructors and `operator=` methods defined, so choose
+the approach that seems to fit best with the type of data contained in the
+packet.
+
+The issues detailed under "**Issues with Asynchronous Operation**", below, no
+longer apply in packetized operation, since the data are accessed in a single
+packet that is guaranteed by the implementation to be a complete, well-defined
+unit resulting from only one sensor update (i.e. the timestamp is guaranteed
+to apply to all the other data in the packet).
+
+In summary, packetized operation is the recommended method for handling
+asynchronous operation. The two sections below detail non-packetized
+operation, which is perhaps more in the spirit of an object-oriented framework,
+but nevertheless has several issues.
+
 ##Requesting Data##
 
 In asynchronous operation, the caller may initiate an update of the sensor data
