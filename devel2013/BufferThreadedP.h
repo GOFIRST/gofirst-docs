@@ -39,7 +39,7 @@ class BufferThread {
     Interface* source;
     Packet pkt;
     bool bUpdating;
-    function<void*()>* tfPersistent = NULL;
+    function<void*()>* tfPersistent;
 
     public:
     BufferThread(Interface* source) : source(source) {
@@ -47,6 +47,8 @@ class BufferThread {
         pthread_mutex_init(&upfl_mtx, NULL);
         pthread_mutex_init(&data_mtx, NULL);
         pthread_cond_init(&read_cond, NULL);
+        
+        tfPersistent = NULL;
 
         bUpdating = false;
     }
