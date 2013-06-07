@@ -72,12 +72,45 @@ class BufferThread {
      * This function should only be called once per object. The result of
      * multiple invocations on a single object is undefined and may cause
      * memory leaks.
+     *
+     * This function should also not be called together with runContinuous()
+     * on a single object; the result is also strictly speaking undefined,
+     * but will most likely result in multiple threads all clamoring to update
+     * and calls to readData() essentially being ignored. Also, the result of
+     * isUpdating() would likely not make sense anymore.
      */
     void spawnThreads() {
         function<void*()> thrFun = bind(&BufferThread::threadMeth, this);
         tfPersistent = new function<void*()>(thrFun);
         pthread_create(&read_thread, NULL, &pthreadWrapper, tfPersistent);
     }
+
+    /**
+     * This should be called to start the background threads in continuous
+     * operation mode. This means the threads do not wait for readData() to
+     * update the packet, they just run another update once the previous one
+     * is done. This could be useful for reading from data streams that are
+     * constantly populated, where updating only on an external schedule could
+     * potentially cause I/O buffers to overfill. Note that isUpdating() will
+     * always return true once the thread has started, since the thread is
+     * constantly updating.
+     *
+     * This function should only be called once per object. The result of
+     * multiple invocations on a single object is undefined and may cause
+     * memory leaks.
+     *
+     * This function should also not be called together with spawnThreads()
+     * on a single object; the result is also strictly speaking undefined,
+     * but will most likely result in multiple threads all clamoring to update
+     * and calls to readData() essentially being ignored. Also, the result of
+     * isUpdating() would likely not make sense anymore.
+     */
+    void runContinuous() {
+        function<void*()> thrFun = bind(&BufferThread::tmContinuous, this, 0);
+        tfPersistent = new function<void*()>(thrFun);
+        pthread_create(&read_thread, NULL, &pthreadWrapper, tfPersistent);
+    }
+
 
     Packet getPacket() {
         /* All data-access sections must have these lock/unlock guards.
@@ -169,6 +202,55 @@ class BufferThread {
                 bUpdating = false;
                 pthread_mutex_unlock(&upfl_mtx);
             }
+        }
+        // We'll never get here, but whatever keeps the compiler happy.
+        return NULL;
+    }
+
+    /**
+     * The updater thread function for continuous operation. Again, this
+     * function is not meant to return; it simply runs until the thread
+     * is canceled.
+     *
+     * \param intervalMs The minimum time between updates. If zero, the updates
+     *        will immediately follow one another.
+     *
+     * Note that the interval-sleeping capability has not yet been implemented.
+     *
+     * It is called from an external wrapper function.
+     */
+    void* tmContinuous(int intervalMs) {
+        // Basically the same as above, only we don't wait for readData.
+
+        Packet pkl; // Thread-local packet
+        // We're constantly updating, so this flag just stays true.
+        pthread_mutex_lock(&upfl_mtx);
+        bUpl = true;
+        pthread_mutex_unlock(&upfl_mtx);
+
+        while (true) {
+
+            // Communicate with the sensor
+            pkl = source->getPacket();
+
+            /* Keep the section in between the lock guards (i.e. the
+             * "critical section") as short and fast as possible. It should
+             * consist only of copying the data received from the sensor
+             * into the internal buffer variables.
+             *
+             * The reason is that other threads (like the main thread) may
+             * want to access data using the get-functions while this
+             * update is happening. If the locked section takes too long,
+             * that thread will be made to wait, which is not a good thing.
+             */
+            pthread_mutex_lock(&data_mtx);
+            // Update cached data
+            pkt = pkl;
+            pthread_mutex_unlock(&data_mtx);
+
+            // Cancellation point, just to be sure
+            // TODO add timed loop capability
+            sleep(0);
         }
         // We'll never get here, but whatever keeps the compiler happy.
         return NULL;
