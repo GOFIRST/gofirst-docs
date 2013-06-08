@@ -47,7 +47,7 @@ class BufferThread {
         pthread_mutex_init(&upfl_mtx, NULL);
         pthread_mutex_init(&data_mtx, NULL);
         pthread_cond_init(&read_cond, NULL);
-        
+
         tfPersistent = NULL;
 
         bUpdating = false;
@@ -227,7 +227,7 @@ class BufferThread {
         Packet pkl; // Thread-local packet
         // We're constantly updating, so this flag just stays true.
         pthread_mutex_lock(&upfl_mtx);
-        bUpl = true;
+        bUpdating = true;
         pthread_mutex_unlock(&upfl_mtx);
 
         while (true) {
