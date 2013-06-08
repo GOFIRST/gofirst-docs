@@ -223,7 +223,7 @@ class BufferThread {
      */
     void* tmContinuous(int intervalMs) {
         // Basically the same as above, only we don't wait for readData.
-
+        bool bUpl; // Thread-local updating flag
         Packet pkl; // Thread-local packet
         // We're constantly updating, so this flag just stays true.
         pthread_mutex_lock(&upfl_mtx);
