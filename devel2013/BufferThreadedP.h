@@ -6,7 +6,10 @@
 
 using boost::function;
 using boost::bind;
-using namespace std;
+
+// Header guards -- this file may be included more than once.
+#ifndef BUFFERTHREADEDP_H_
+#define BUFFERTHREADEDP_H_
 
 /**
  * Wrapper for interfacing with C-style pthreads library (so C linkage may or
@@ -262,8 +265,8 @@ class BufferThread {
 /**
  * Definition of the callback function.
  *
- * Note that this should only occur once in the final repository. Place the
- * definition of this function somewhere separate from the buffer class.
+ * Note that this should only occur once in the final codebase. Having it in
+ * a generic templated class helps for this purpose.
  */
 void* pthreadWrapper(void* arg) {
     // Aaugh! My eyes!
@@ -272,4 +275,6 @@ void* pthreadWrapper(void* arg) {
     // created it (destructor).
     return (*tFun)();
 }
+
+#endif
 
