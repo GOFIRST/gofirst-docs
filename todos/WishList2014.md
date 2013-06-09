@@ -72,6 +72,14 @@ In no particular order, here are the tasks:
   low-level functions can stay in C++ and be called from Python code; it's
   definitely possible, but we would need to investigate how to do this.
 
+* [ROS][]: There may be a point where we find that the abstractions, flexibility,
+  modularity, and access to existing algorithms and software offered by ROS are
+  worth the tremendous overhead of installing and using it. Additionally, if a
+  ROS guru joins the team and is able to contribute significant help in using
+  it, that would be another possible impetus for moving to ROS. We might also
+  consider other lightweight ROS-like robot frameworks; there were a few
+  listed on the ROS wiki or thereabouts.
+
 [boost-threads]: http://www.boost.org/doc/libs/1_53_0/doc/html/thread.html
 [clang]: http://clang.llvm.org/index.html
 [clang-comp]: http://clang.llvm.org/comparison.html
@@ -80,3 +88,4 @@ In no particular order, here are the tasks:
 [apache]: http://apache.org/licenses/
 [bsd]: http://directory.fsf.org/wiki/License:BSD_3Clause
 [Doxygen]: http://www.stack.nl/~dimitri/doxygen/
+[ROS]: http://www.ros.org/wiki/
