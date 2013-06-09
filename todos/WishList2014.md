@@ -29,7 +29,7 @@ In no particular order, here are the tasks:
   (it's not _that_ different from other distributions, on some level).
 
 * Development Tools: Find a good graphical debugger that works under Linux.
-  Switch to `[clang][]` compiler instead of `gcc` (reasons: Better
+  Switch to [`clang`][] compiler instead of `gcc` (reasons: Better
   performance, more sensible error messages, fewer potential licensing issues,
   more [here][clang-comp]).
 
