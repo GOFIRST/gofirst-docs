@@ -64,7 +64,7 @@ In no particular order, here are the tasks:
   modules such as the main loop, vision, and possibly AI could be ported to
   Python to make it more readable and more easily maintainable. Performance may
   not be an issue; using the proper libraries, Python code can be written that
-  is actually faster than a naive C++ implementation (this was the case with a
+  is actually faster than a naïve C++ implementation (this was the case with a
   Monte Carlo simulation I helped write for a physics project -- the NumPy
   version was around 7x faster than the C++ version). The interactivity
   capability provided in Python is also helpful for quick experimentation
