@@ -46,7 +46,7 @@ In no particular order, here are the tasks:
   on \*nix (including Mac OS X) and on Windows environments. This way, those
   who prefer the Windows development tools for whatever reason can use them
   without inconveniencing others. Boost may be of some help in this pursuit.
-  Related: "Programming Language", below.
+  Related: "Programming languages", below.
 
 * Licensing: Decide whether to publish our codebase, and if so, which license
   to publish it under. There are several possible licenses, such as the
