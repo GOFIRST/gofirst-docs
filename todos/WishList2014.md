@@ -9,7 +9,8 @@ In no particular order, here are the tasks:
 
 ##Definitely##
 * Threading: Move to the [Boost threading library][boost-threads] for better
-  compatibility with C++ object-oriented code.
+  compatibility with C++ object-oriented code. An alternative, perhaps a bit
+  more natural to program, is the C++ [atomic operations library][atomic].
 
 * Cleanup: Go through code, unify style (conformance to GOFIRST coding
   conventions), make non-object-oriented code object-oriented (avoid globals).
@@ -81,6 +82,7 @@ In no particular order, here are the tasks:
   listed on the ROS wiki or thereabouts.
 
 [boost-threads]: http://www.boost.org/doc/libs/1_53_0/doc/html/thread.html
+[atomic]: http://en.cppreference.com/w/cpp/atomic
 [clang]: http://clang.llvm.org/index.html
 [clang-comp]: http://clang.llvm.org/comparison.html
 [fbranch]: http://www.atlassian.com/git/workflows#!workflow-feature-branch
