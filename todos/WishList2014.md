@@ -23,7 +23,9 @@ In no particular order, here are the tasks:
 * Testing: Build a robot simulator framework for easier testing of individual
   components. Consider unit testing on critical pieces of code. The goal is
   that the robot program can run on any computer with simulated (or real)
-  sensor inputs and the user can monitor its progress.
+  sensor inputs and the user can monitor its progress. Development should be
+  done with the ultimate goal in mind of being able to simulate an entire field
+  and the associated sensory inputs to the robot.
 
 * Operating System: Either fix the silly issues we've been having with Ubuntu
   (Ethernet on laptop, OpenCV) or tutor everyone in the basics of using Arch
@@ -32,7 +34,9 @@ In no particular order, here are the tasks:
 * Development Tools: Find a good graphical debugger that works under Linux.
   Switch to [`clang`][clang] compiler instead of `gcc` (reasons: Better
   performance, more sensible error messages, fewer potential licensing issues,
-  more [here][clang-comp]).
+  more [here][clang-comp]). Another toolchain change to consider is using
+  [CMake][], which has the potential to simplify the build process and
+  fits in well with our long-term goal of being completely cross-platform.
 
 * Version Control: Move the codebase into _one_ repository (it's one program,
   so it needs to all be contained in a single repo). Introduce a feature-branch
@@ -40,6 +44,10 @@ In no particular order, here are the tasks:
   separate feature branches (see [Feature Branch Workflow][fbranch] for more
   details). This should prevent the commits from getting messed up and
   interfering with each other, whatever that means.
+
+* Improve error and exceptional-condition handling. That is, actually implement
+  it. The robot software should ultimately be designed with robustness in mind;
+  correctness is a secondary concern.
 
 ##Hopefully##
 * Platform-independent code: Modify the codebase so none of it depends on Unix-
@@ -59,6 +67,13 @@ In no particular order, here are the tasks:
   documentation-processing tools such as [Doxygen][], so we can generate a clean
   HTML or PDF set of documentation for our code.
 
+* Incorporate GPU support for vision algorithms, and perhaps other algorithms
+  dealing (ideally) with large, structured datasets and interactions.'
+  Otherwise, the GPU actually doesn't provide much of a gain in speed.
+  Programming platforms to look at: [CUDA][] (NVIDIA only) and [OpenCL][]
+  (cross-platform). The OpenCL route is probably more resistant to eventual,
+  inevitable changes in computer hardware used on the robot.
+
 ##Maybe##
 * Programming languages: Consider using a higher-level language such as Python
   for the code that doesn't require the low-level approach of C/C++. High-level
@@ -73,6 +88,8 @@ In no particular order, here are the tasks:
   low-level functions can stay in C++ and be called from Python code; it's
   definitely possible, but we would need to investigate how to do this.
 
+* Implement full event-driven and asynchronous execution.
+
 * [ROS][]: There may be a point where we find that the abstractions, flexibility,
   modularity, and access to existing algorithms and software offered by ROS are
   worth the tremendous overhead of installing and using it. Additionally, if a
@@ -85,9 +102,12 @@ In no particular order, here are the tasks:
 [atomic]: http://en.cppreference.com/w/cpp/atomic
 [clang]: http://clang.llvm.org/index.html
 [clang-comp]: http://clang.llvm.org/comparison.html
+[CMake]: http://cmake.org/
 [fbranch]: http://www.atlassian.com/git/workflows#!workflow-feature-branch
 [GPL]: http://www.gnu.org/licenses/gpl.html
 [apache]: http://apache.org/licenses/
 [bsd]: http://directory.fsf.org/wiki/License:BSD_3Clause
 [Doxygen]: http://www.stack.nl/~dimitri/doxygen/
+[CUDA]: http://www.nvidia.com/object/cuda_home_new.html
+[OpenCL]: http://www.khronos.org/opencl/
 [ROS]: http://www.ros.org/wiki/
