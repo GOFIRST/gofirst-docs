@@ -4,16 +4,17 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>340</x>
-      <y>130</y>
-      <w>130</w>
-      <h>90</h>
+      <x>310</x>
+      <y>120</y>
+      <w>190</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>/Obstacle/
 --
 float size
-float confidence
+float confidence = [0..1]
 bool isRelative
+TimeStamp createdTime
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -62,34 +63,34 @@ FlagColor color</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>180</x>
-      <y>190</y>
+      <y>200</y>
       <w>240</w>
-      <h>90</h>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;70;30;50;220;50;220;30</additional_attributes>
+    <additional_attributes>30;60;30;40;220;40;220;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>370</x>
-      <y>190</y>
+      <y>200</y>
       <w>50</w>
-      <h>90</h>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;70;30;30</additional_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>370</x>
-      <y>190</y>
+      <y>200</y>
       <w>220</w>
-      <h>90</h>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>200;70;200;50;30;50;30;30</additional_attributes>
+    <additional_attributes>200;60;200;40;30;40;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -221,5 +222,20 @@ NaturalSpline
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>30;30;90;30;90;160;70;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>550</x>
+      <y>120</y>
+      <w>160</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>All properties
+are taken to be
+public unless
+otherwise noted.
+bg=blue</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>
