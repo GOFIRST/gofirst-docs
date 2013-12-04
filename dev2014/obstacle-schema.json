@@ -1,0 +1,97 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Obstacle",
+    "description": "A generalized representation of an obstacle: Barrel, flag or line.",
+    "type": "object",
+    "properties": {
+        "obstacleType": {
+            "description": "What type this obstacle is, i.e. whether it is a cylinder, line, flag, or something else.",
+            "enum" : ["CylinderObstacle", "LineObstacle", "FlagObstacle"]
+        },
+        "id": {
+            "description": "A unique identifier, assigned by the Map.",
+            "type": "integer"
+        },
+        "size": {
+            "description": "A polymorphic size specifier, in meters. Radius for cylindrical obstacles, width for lines.",
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": false
+        },
+        "confidence": {
+            "description": "The confidence in this object actually existing at the given location.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "exclusiveMinimum": false,
+            "exclusiveMaximum": false
+        }
+        "createdTime": {
+            "description": "The time that this object was created, most likely in the originating sensor code.",
+            "type": {"$ref":  "/definitions/TimeStamp"}
+        }
+        "position": {
+            "description": "The position of this object's center, if it has a definite single location (e.g. not a line).",
+            "type": {"$ref": "/definitions/Point"}
+        }
+        "color": {
+            "description": "The color of an obstacle, if it is significant (e.g. for flags)",
+            "enum": ["Blue", "Red"]
+        }
+        "controlPoints": {
+            "description": "A series of control points defining a straight or curved line segment.",
+            "type": "object",
+            "properties": {
+                "points": {
+                    "description": "The list of points."
+                    "type": "array",
+                    "items": {"$ref": "/definitions/Point"}
+                }
+                "interpolType": {
+                    "description": "The interpolation type used to join the points.",
+                    "enum": ["Linear", "NaturalSpline"]
+                }
+            },
+            "required": ["points", "interpolType"]
+        }
+
+    },
+    "required": ["id", "size", "confidence", "createdTime"],
+    "definitions": {
+        "TimeStamp": {
+            "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"},
+                "hours": {"description": "Hours in 24-hour format", "type": "integer"},
+                "minutes": {"type": "integer"}
+                "seconds": {
+                    "description": "Seconds as a float, to allow representing fractional seconds",
+                    "type": "number"
+                }
+            },
+            "required": ["year", "month", "day", "hours", "minutes", "seconds"]
+        },
+        "Point": {
+            "properties": {
+                "xLocation": {
+                    "description": "Distance from the origin along the x-axis in meters.",
+                    "type": "number"
+                }
+                "yLocation": {
+                    "description": "Distance from the origin along the y-axis in meters.",
+                    "type": "number"
+                }
+                "height": {
+                    "description": "Height above the origin, also in meters.",
+                    "type": "number"
+                }
+                "isRelative": {
+                    "description": "Whether this position is relative to the robot, or to some external origin (e.g. the robot's starting point)",
+                    "type": "boolean"
+                }
+            },
+            "required": ["xLocation", "yLocation", "isRelative"]
+        }
+    }
+}
