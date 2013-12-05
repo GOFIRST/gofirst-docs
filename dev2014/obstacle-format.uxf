@@ -24,12 +24,11 @@ TimeStamp createdTime
       <x>510</x>
       <y>260</y>
       <w>210</w>
-      <h>60</h>
+      <h>50</h>
     </coordinates>
     <panel_attributes>LineObstacle
 --
-vector&lt;Point&gt; controlPoints
-InterpolType interpol</panel_attributes>
+PathSpec path</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -134,12 +133,12 @@ bool isRelative</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>430</x>
-      <y>260</y>
-      <w>100</w>
-      <h>160</h>
+      <y>370</y>
+      <w>110</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>80;30;50;30;50;140;30;140</additional_attributes>
+    <additional_attributes>90;30;50;30;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -170,8 +169,8 @@ FlagColor
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>640</x>
-      <y>360</y>
+      <x>590</x>
+      <y>440</y>
       <w>120</w>
       <h>100</h>
     </coordinates>
@@ -182,17 +181,6 @@ InterpolType
 "NaturalSpline"
 ...</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>690</x>
-      <y>260</y>
-      <w>110</w>
-      <h>180</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;90;30;90;160;70;160</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Note</type>
@@ -208,5 +196,41 @@ public unless
 otherwise noted.
 bg=blue</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>520</x>
+      <y>360</y>
+      <w>200</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>PathSpec
+--
+vector&lt;Point&gt; points
+InterpolType interpolation</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>690</x>
+      <y>270</y>
+      <w>80</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;60;30;60;100;30;100</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>680</x>
+      <y>370</y>
+      <w>90</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>40;30;70;30;70;100;30;100</additional_attributes>
   </element>
 </diagram>

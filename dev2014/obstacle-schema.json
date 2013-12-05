@@ -39,20 +39,7 @@
             "enum": ["Blue", "Red"]
         }
         "controlPoints": {
-            "description": "A series of control points defining a straight or curved line segment.",
-            "type": "object",
-            "properties": {
-                "points": {
-                    "description": "The list of points."
-                    "type": "array",
-                    "items": {"$ref": "/definitions/Point"}
-                }
-                "interpolType": {
-                    "description": "The interpolation type used to join the points.",
-                    "enum": ["Linear", "NaturalSpline"]
-                }
-            },
-            "required": ["points", "interpolType"]
+            "type": {"$ref": "/definitions/PathSpec"}
         }
 
     },
@@ -92,6 +79,21 @@
                 }
             },
             "required": ["xLocation", "yLocation", "isRelative"]
+        },
+        "PathSpec": {
+            "description": "A series of control points that are interpolated to define a straight or curved line segment.",
+            "properties": {
+                "points": {
+                    "description": "The list of points."
+                    "type": "array",
+                    "items": {"$ref": "/definitions/Point"}
+                }
+                "interpolType": {
+                    "description": "The interpolation type used to join the points.",
+                    "enum": ["Linear", "NaturalSpline"]
+                }
+            },
+            "required": ["points", "interpolType"]
         }
     }
 }
