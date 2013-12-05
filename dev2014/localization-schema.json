@@ -1,0 +1,117 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Localization",
+    "description": "A generalized representation of current localization state.",
+    "type": "object",
+    "properties": {
+        "position": {
+            "description": "The Cartesian coordinates of the current state.",
+            "type": {"$ref": "/definitions/Point"}
+        },
+        "heading": {
+            "description": "The current heading of the state, in degrees with North being 0 and rotating clockwise.",
+            "type": "number",
+            "minimum": 0,
+			"maximum": 360,
+            "exclusiveMinimum": false,
+			"exclusiveMaximum": true
+        },
+		"pitch": {
+			"description": "The current pitch of the state, in degrees with level being 0 and rotating upwards.",
+            "type": "number",
+            "minimum": 0,
+			"maximum": 360,
+            "exclusiveMinimum": false,
+			"exclusiveMaximum": true
+		},
+		"roll": {
+			"description": "The current roll of the state, in degrees with level being 0 and rotating to the right.",
+            "type": "number",
+            "minimum": 0,
+			"maximum": 360,
+            "exclusiveMinimum": false,
+			"exclusiveMaximum": true
+		},
+		"tier": {
+            "description": "What level the localization data is coming from.",
+            "enum" : ["T1", "T2", "T3"]
+        },
+        "confidence": {
+            "description": "The confidence in this state vector's accuracy.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "exclusiveMinimum": false,
+            "exclusiveMaximum": false
+        },
+        "createdTime": {
+            "description": "The time that this state was calculated, most likely in the originating sensor code.",
+            "type": {"$ref":  "/definitions/TimeStamp"}
+        },
+		"gps": {
+			"description": "The values of the localization, given in GPS coordinates.",
+			"type": "object",
+			"properties": {
+				"longitude": {
+					"description": "The longitudinal GPS coordinate of the current state.",
+					"type": {"$ref":  "/definitions/Coordinate"}
+				},
+				"latitude": {
+					"description": "The longitudinal GPS coordinate of the current state.",
+					"type": {"$ref":  "/definitions/Coordinate"}
+				},
+				"required": ["longitude", "latitude"]
+			},
+			"definitions": {
+				"Coordinate": {
+					"properties": {
+						"degrees": {"type": "integer"},
+						"minutes": {"type": "integer"},
+						"seconds": {"type": "number"},
+						"hemisphere": {"enum": ["North", "South", "East", "West"]}
+					},
+					"required": ["degrees", "minutes", "seconds", "hemisphere"]
+				}
+			}
+		}
+
+    },
+    "required": ["position", "heading", "tier", "createdTime"],
+    "definitions": {
+        "TimeStamp": {
+            "properties": {
+                "year": {"type": "integer"},
+                "month": {"type": "integer"},
+                "day": {"type": "integer"},
+                "hours": {"description": "Hours in 24-hour format", "type": "integer"},
+                "minutes": {"type": "integer"}
+                "seconds": {
+                    "description": "Seconds as a float, to allow representing fractional seconds",
+                    "type": "number"
+                }
+            },
+            "required": ["year", "month", "day", "hours", "minutes", "seconds"]
+        },
+        "Point": {
+            "properties": {
+                "xLocation": {
+                    "description": "Distance from the origin along the x-axis in meters.",
+                    "type": "number"
+                }
+                "yLocation": {
+                    "description": "Distance from the origin along the y-axis in meters.",
+                    "type": "number"
+                }
+                "height": {
+                    "description": "Height above the origin, also in meters.",
+                    "type": "number"
+                }
+                "isRelative": {
+                    "description": "Whether this position is relative to the robot, or to some external origin (e.g. the robot's starting point)",
+                    "type": "boolean"
+                }
+            },
+            "required": ["xLocation", "yLocation", "isRelative"]
+        }
+    }
+}
