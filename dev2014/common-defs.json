@@ -33,8 +33,8 @@
                     "description": "Height above the origin, also in meters.",
                     "type": "number"
                 }
-                "isRelative": {
-                    "description": "Whether this position is relative to the robot, or to some external origin (e.g. the robot's starting point)",
+                "isRobotRelative": {
+                    "description": "Whether this position is relative to the robot, instead of to some external origin (e.g. the robot's starting point)",
                     "type": "boolean"
                 }
             },
