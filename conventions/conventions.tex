@@ -18,7 +18,7 @@ linkcolor=blue,
 citecolor=blue
 }
 
-% Set GO FIRST template style
+% Set GOFIRST template style
 \usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
@@ -40,8 +40,7 @@ citecolor=blue
     \today
 }
 \lfoot{
-\footnotesize{The information contained within this document \\ 
-is property of GOFIRST. ® All rights reserved.}
+\footnotesize{Copyright © 2012-\the\year GOFIRST. All rights reserved.}
 }
 \rfoot{Page \textbf{\thepage} of \pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
@@ -50,14 +49,15 @@ is property of GOFIRST. ® All rights reserved.}
 
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\var}[1]{\texttt{#1}}
-\newcommand{\commandline}[1]{\texttt{\$ #1}}
+\newcommand{\commandline}[1]{\begin{quotation}\texttt{\$ #1}\end{quotation}}
 \newcommand{\clloption}[1]{-{}-#1}
 \newcommand{\toreplace}[1]{\emph{#1}}
+\newcommand{\textdef}[1]{\textbf{#1}}
 
 \begin{document}
-\title{GOFIRST Source Code Conventions}
+\title{GOFIRST Source Code Conventions and Style Guide}
 \author{Max Veit\\
-GOFIRST Software Project Lead}
+GOFIRST Senior Software Engineer}
 \date{Last Updated: \today}
 
 \maketitle
@@ -66,73 +66,70 @@ GOFIRST Software Project Lead}
 
 \section{Introduction}
 \subsection{Purpose and Audience}
-The purpose of this document is to establish a uniform style of writing source code for all programs written for GO FIRST. This is intended to facilitate collaboration between programmers as well as maintainability of software, since a uniform style removes one of the main barriers to understanding the source code written by others (or even yourself!). 
+The purpose of this document is to establish a uniform style of writing source code for all programs written for GOFIRST projects, mainly the IGVC competition. This is intended to facilitate collaboration between programmers as well as maintainability of software, since a uniform style removes one of the main barriers to understanding the source code written by others (or yourself!).
 
-This document is aimed at anybody interested in writing programs that will become a part of or aid GO FIRST projects. It assumes only a basic, general knowledge of programming, including the existence of different programming languages, the purpose of a source code file, and the existence of a language-specific syntax for the text contained therein. However, the style guides in Section \ref{sec:references} do assume a basic familiarity with the specific syntax of the language being described. To better understand these guides it might be helpful to find a simple introductory tutorial in the language and its syntactic constructs (such as function definitions, ``if,'' and ``for'' constructs).
+This document is aimed at anybody interested in writing programs that will become a part of or aid GOFIRST projects. It assumes only a basic, general knowledge of programming, including the existence of different programming languages, the purpose of a source code file, and the existence of a language-specific syntax for the text contained therein. However, the style guides in Section \ref{sec:references} do assume a basic familiarity with the specific syntax of the language being described. To better understand these guides it might be helpful to find a simple introductory tutorial in the language and its syntactic constructs (such as function definitions, ``if,'' and ``for'' constructs).
 
 \subsection{Typographic Conventions}
 Source code, variable names, command lines, and anything else that is only correct exactly as it appears (including spaces) will be shown in a \texttt{monospaced font}.
 
-Commands you type at the operating system command line interface (ordinary terminal in Unix or GNU/Linux, Git Bash or Cygwin prompt in Windows) will be prefixed with a \commandline{} symbol. You should not actually type the \texttt{\$} or the space that follows it. It is only shown in this document to remind you that the text after it is a command (you should also see something like it in the actual terminal; the symbol is called the ``prompt''). When you actually type the command, enter everything from the first word after the \texttt{\$} onwards (including spaces!).
+Definitions, special names, or other words to remember are set in a \textdef{bold} font (in text, as are section headings separate from the body text).
 
-If there is something in one of these command lines or program snippets you need to fill in yourself it will be indicated by emphasis. For example, \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"} means you should replace \toreplace{Your Name} with your actual name (but leave the quotes as they are; those aren't emphasized).
+Commands you type at the operating system command line interface (ordinary terminal in Unix or GNU/Linux, Git Bash or Cygwin prompt in Windows) will be prefixed with a \texttt{\$} symbol. You should not actually type the \texttt{\$} or the space that follows it. It is only shown in this document to remind you that the text after it is a command (you should also see something like it in the actual terminal; the symbol is called the \textdef{prompt}). When you actually type the command, enter everything from the first word after the \texttt{\$} onwards (including spaces, although not the one before the prompt).
+
+If there is something in one of these command lines or program snippets you need to fill in yourself it will be indicated with \textit{italics}. For example, \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"} means you should replace \toreplace{Your Name} with your actual name (but leave the quotes as they are; those aren't emphasized).
+
+Command lines that are too long to fit on this page are continued on the immediately following line and without a leading \texttt{\$}, like so: \commandline{foo bar baz \clloption{quux} \clloption{blah} \toreplace{File Name Here}\\\clloption{hippopotomonstrosesquipedaliophobia}} To type such a command line into the terminal, ignore the line break (replace it with a single space) or use your terminal's line-continuation character if you know what that is.
 \section{Language Classes}
 This section lists the classes of languages that will be discussed in this document.
 \begin{description}
     \item[C-syntax (C, C++, Java and C\#)] \hfill \\
-        This is a family of languages with differing programming paradigms. The one thing they have in common is the basic syntax derived from C, so they will generally be discussed as a group in this document. We will almost certainly be using one or more of these languages in most GO FIRST projects.
+        This is a family of languages with differing programming paradigms. The one thing they have in common is the basic syntax derived from C, so they will generally be discussed as a group in this document. Most GOFIRST code so far uses the C++ and C\# languages in this family.
     \item[Python] \hfill \\
-        This language blurs the boundaries between programming and scripting; its rapid development cycle and interpreted nature make it ideal for high-level control of large, composite programs, an area known as the ``glue layer.'' Its syntax is much simpler and more consistent than that of the C-syntax languages. Whether we use this language in GO FIRST projects remains to be seen.
+        This language blurs the boundaries between programming and scripting; its rapid development cycle and interpreted nature make it ideal for high-level control of large, composite programs, an area known as the ``glue layer.'' Its syntax is much simpler and more consistent than that of the C-syntax languages. We are considering using this language in the 2014 competition code for the glue layer and more algorithmically focused sections of the program.
     \item[LabVIEW] \hfill \\
-        The language designed for use with National Instruments (NI) hardware. Since we plan on using NI controllers in our larger robot projects we will almost certainly need to use LabVIEW at some point. What distinguishes it from most other languages is that it is a graphical language; programs are created not by writing statements to a source code file but rather by visually connecting virtual blocks with wires. This graphical nature makes it difficult to set specific style guidelines for LabVIEW code. Some conventions are already imposed upon the programmer, but the visual layout of the blocks and wires themselves is completely up to the programmer. ``Spaghetti code'' that looks like a literal pile of spaghetti can quickly ensue if you are not careful to organize the blocks and wires in a logical, readable fashion. A general rule: If you cannot understand the code that you wrote yesterday, you need to put more effort into organizing your code layout.
+        The language designed for use with National Instruments (NI) hardware. In the past, GOFIRST has used NI controllers and boards, necessitating the use of this langauge; the hardware used in IGVC What distinguishes it from most other languages is that it is a graphical language; programs are created not by writing statements to a source code file but rather by visually connecting virtual blocks with wires. This graphical nature makes it difficult to set specific style guidelines for LabVIEW code. Some conventions are already imposed upon the programmer, but the visual layout of the blocks and wires themselves is completely up to the programmer. ``Spaghetti code'' that looks like a literal pile of spaghetti can quickly ensue if you are not careful to organize the blocks and wires in a logical, readable fashion. A general rule: If you cannot understand the code that you wrote yesterday, you need to put more effort into organizing your code layout. Of course, this rule applies to text-based languages as well!
 \end{description}
 
-\section{References}
-\label{sec:references}
-So as not to reinvent the wheel, we will be holding ourselves to some already established and well-known standards. Also includes a few humorous general tips on programming.
-\begin{itemize}
-    \item Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
-        This is a good, but not perfect, introduction to basic style for Java source code. It provides a guide for the general ``cosmetics'' of source code files in C-like languages so programmers don't have to fight with something as trivial and infuriating as brace placement. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
-    \item \label{pyguide} Style Guide for Python Code: \url{http://www.python.org/dev/peps/pep-0008/} \\
-        A very good guide for Python code with general advice that applies to other programming languages as well. Please at least read the introduction, first section, and section on comments. If we do any coding in Python, the style should follow this guide. Comments in other languages should follow the advice in this guide; for all other areas the language's style guide naturally has precedence.
-    \item Pasta Code: \url{http://www.gnu.org/fun/jokes/pasta.code.html} \\
-        If youre doing object-oriented programming, please try for ravioli code. Canderli code and Ristto code should be avoided because of poor maintainability. Polenta code is nice, too, if it never needs to be modified (which is generally never the case, so watch out!)
-    \item Good Code: \url{http://xkcd.com/844/} \\
-        Please try to stay in the "Code Well" loop. Yes, requirements do change, and we've had to throw out a few projects because of this, but trust me: this is not always the case!
-\end{itemize}
+\section{Source Code Style and Conventions}
+\label{sec:codestyle}
+This section focuses on the detailed mechanics of the style of GOFIRST source code. The term \textdef{style} as it is used here means the positioning, layout, whitespace, and naming aspects of source code not directly specified by the program's logical structure. Source code style is meant to facilitate the reading, understanding, and modification of a source code file. A source file can compile to a completely correct, consistent program and still be difficult or impossible to read, which is why programmers generally hold themselves to some sort of style guide, whether explicity written or not. 
 
-\section{Modifications to the Java Style Guide}
-There are a few topics where the Java style guide provides advice that is either unsuited to the GO FIRST software development model or actually hurts the readability of code.
-
-\emph{Note:} This section will be filled out soon.
+\textit{This section to be expanded soon.}
 
 \section{Technical Notes}
-\begin{itemize}
-    \item Encoding: Please use UTF-8 for general symbol support and inter-system compatibility. Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you. See Appendix \ref{sec:editors}), but if we have problems with this we'll have to go with Windows line endings (CR LF).
+\subsection{File Encoding}
+Please use \textdef{UTF-8} for general symbol support and inter-system compatibility. No, I don't anticipate any need to write comments in Russian, Finnish, or Japanese; nevertheless, it is the modern, extensible way to encode text in a file. Also, the encoding happens to coincide with ASCII over the entire set of 128 pure ASCII characters, so you have no excuse.
 
-        \emph{Update:} The Git version control system includes transparent handling for this issue. If you are working on Windows, make sure you set Git's \var{core.autocrlf} setting to \var{true} (You can do this by typing \commandline{git config \clloption{global} core.autocrlf true} into the Git Bash prompt).
-    \item Line Length: 79 characters is the \emph{maximum} amount of characters allowed in one line of source code. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. \\
-        The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
-    \item Git setup: Please set up your Git settings so that your commits are tagged with your name and email. This is useful if we want to know who made a certain change e.g. to find out what it was intended to do. You can set this up by typing:
+Using Unicode strings in programming storage and communications is a little trickier, as some languages' support for the feature is still lagging behind. Please use Unicode for all strings intented for communication with other programs, e.g. for strings sent via the network or via message queues. For communication with external hard-programmed hardware devices (e.g. an LCD status display), please use whatever encoding the device accepts by default.
 
-        \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"}\\
-        \commandline{git config \clloption{global} user.email \toreplace{your.address@emaildomain.whatever}}
+\subsection{Line Endings} Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you; go see Appendix \ref{sec:editors}). However, in order to preempt any possible problems or inconsistencies, please use the automation facilities available to you. The Git version control system includes transparent handling for line ending formatting. If you are working on Windows, make sure you set Git's \var{core.autocrlf} setting to \var{true} (You can do this by typing \commandline{git config \clloption{global} core.autocrlf true} into the Git Bash prompt).
 
-    into the Unix or Git Bash command line.
-    \item General Rules: We will presumably have programmers on all different systems, so if you have a choice between convenience and compatibility you should almost always choose compatibility.
+\subsection{Line Length} The \emph{maximum} amount of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. \\
 
-\end{itemize}
+The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
+
+\subsection{Git setup} Please set up your Git settings so that your commits are tagged with your name and email. This is useful if we want to know who made a certain change e.g. to find out what it was intended to do. You can set this up by typing:
+        \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"}
+        \commandline{git config \clloption{global} user.email\\
+        \toreplace{your.address@emaildomain.tld}}
+into the Unix or Git Bash command line.
+
+\subsection{General Rules} We have programmers using different systems (primarily *nix, but occasionally Mac and Windows), so if you have a choice between convenience and compatibility you should almost always choose compatibility.
 
 \section{Whitespace}
 \label{sec:spacing}
+The issue of whitespace is so contentious that it is a good idea to dedicate a section specifically to this topic.
+
 Please read the \hyperref[pyguide]{Python style guide}, sections "Code lay-out" and "Whitespace\ldots" (you can ignore the "Imports" subsection since it is Python-specific). These rules apply well both to Python and C-syntax code, so please observe them.
 
-Yes, Python is quite different from other languages in terms of handling whitespace, but I think imposing a standard on how whitespace can be used to emphasize code structure is a good thing in any programming language. For one, it quells the stupid "holy wars" on what style of indentation is preferable, or even superior. If you want a good reason to use spaces instead of tabs, consider the case of continuation of long lines of code. Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are just a recipe for disaster (different editors will throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
+Yes, Python is quite different from other languages in terms of handling whitespace, but imposing a standard on how whitespace can be used to emphasize code structure is a good thing in any programming language. For one, it quells the stupid "holy wars" on what style of indentation is preferable, or even superior. If you want a good reason to use spaces instead of tabs, consider the case of continuation of long lines of code. Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are often a recipe for disaster (different editors sometimes throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
 
 So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
 %TODO Instuctions for various editors
 
-\section{General Recommendations}
+\section{Miscellaneous Recommendations}
+This is a miscellaneous collection of recommendations concerning programming in general, and not any specific language.
 \begin{itemize}
     \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
         \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
@@ -143,7 +140,7 @@ So please, for the sake of consistency, set your editor to expand tabs to spaces
 \appendix
 \section{Editor and IDE recommendations}
 \label{sec:editors}
-This section lists some text editors and Integrated Development Environments (IDEs) that members of GO FIRST have found to be useful and productive for programming diverse languages on the different platforms.
+This section lists some text editors and Integrated Development Environments (IDEs) that members of GOFIRST have found to be useful and productive for programming diverse languages on the different platforms.
 \subsection{Text editors by platform}
 \begin{description}
     \item[Windows] \hfill \\
@@ -187,6 +184,21 @@ This section lists some text editors and Integrated Development Environments (ID
     \item[Others] \hfill \\
         Search the web and use your best judgement :)
 \end{description}
+
+\appendix
+\section{References}
+\label{sec:references}
+So as not to reinvent the wheel, we will be holding ourselves to some already established and well-known standards. Also listed here are a few lighthearted presentations of general tips on programming.
+\begin{itemize}
+    \item Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
+        This is a good, but not perfect, introduction to basic style for Java source code. It provides a guide for the general ``cosmetics'' of source code files in C-like languages so programmers don't have to fight with something as trivial and infuriating as brace placement. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
+    \item \label{pyguide} Style Guide for Python Code: \url{http://www.python.org/dev/peps/pep-0008/} \\
+        A very good guide for Python code with general advice that applies to other programming languages as well. Please at least read the introduction, first section, and section on comments. If we do any coding in Python, the style should follow this guide. Comments in other languages should follow the advice in this guide; for all other areas the language's style guide naturally has precedence.
+    \item Pasta Code: \url{http://www.gnu.org/fun/jokes/pasta.code.html} \\
+        If you're doing object-oriented programming, please try for ravioli code. Canderli code and Ristto code should be avoided because of poor maintainability. Polenta code is nice, too, if it never needs to be modified (which is generally never the case, so watch out!)
+    \item Good Code: \url{http://xkcd.com/844/} \\
+        Please try to stay in the "Code Well" loop. Yes, requirements do change, and we've had to throw out a few projects because of this, but trust me: this is not always the case!
+\end{itemize}
 
 \end{document}
 
