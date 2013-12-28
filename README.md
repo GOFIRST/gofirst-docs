@@ -1,4 +1,4 @@
 gofirst-docs
 ============
 
-Programming documentation for GO FIRST group
+Programming documentation & common schemas for GOFIRST projects
