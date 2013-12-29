@@ -7,6 +7,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{droid}
 \usepackage[defaultmono]{droidmono}
+\usepackage{fancyvrb}
 
 % Custom stylistic preferences
 \usepackage{parskip}
@@ -48,6 +49,11 @@ citecolor=blue
 \titleformat{\section}[frame]{\large\bfseries}{}{10pt}{\thesection . \quad}
 
 \newcommand{\code}[1]{\texttt{#1}}
+% Special code-example environment that fits 80 characters in one \textwidth
+% The conversion factor is the golden ratio / 80 - it is the vertical size of
+% characters that fit 80 times horizontally in a \textwidth.
+\DefineVerbatimEnvironment{codeex}{Verbatim}{frame=single,
+    formatcom=\fontsize{0.02023\textwidth}{0.02427\textwidth}\selectfont}
 \newcommand{\var}[1]{\texttt{#1}}
 \newcommand{\commandline}[1]{\begin{quotation}\texttt{\$ #1}\end{quotation}}
 \newcommand{\clloption}[1]{-{}-#1}
@@ -88,14 +94,47 @@ This section lists the classes of languages that will be discussed in this docum
     \item[Python] \hfill \\
         This language blurs the boundaries between programming and scripting; its rapid development cycle and interpreted nature make it ideal for high-level control of large, composite programs, an area known as the ``glue layer.'' Its syntax is much simpler and more consistent than that of the C-syntax languages. We are considering using this language in the 2014 competition code for the glue layer and more algorithmically focused sections of the program.
     \item[LabVIEW] \hfill \\
-        The language designed for use with National Instruments (NI) hardware. In the past, GOFIRST has used NI controllers and boards, necessitating the use of this langauge; the hardware used in IGVC What distinguishes it from most other languages is that it is a graphical language; programs are created not by writing statements to a source code file but rather by visually connecting virtual blocks with wires. This graphical nature makes it difficult to set specific style guidelines for LabVIEW code. Some conventions are already imposed upon the programmer, but the visual layout of the blocks and wires themselves is completely up to the programmer. ``Spaghetti code'' that looks like a literal pile of spaghetti can quickly ensue if you are not careful to organize the blocks and wires in a logical, readable fashion. A general rule: If you cannot understand the code that you wrote yesterday, you need to put more effort into organizing your code layout. Of course, this rule applies to text-based languages as well!
+        The language designed for use with National Instruments (NI) hardware. In the past, GOFIRST has used NI controllers and boards, necessitating the use of this langauge. NI's controllers and language are no longer used in the IGVC competition robots, so this document does not discuss the language in detail. What distinguishes LabVIEW from most other languages is that it is a graphical language; programs are created not by writing statements to a source code file but rather by visually connecting virtual blocks with wires. This graphical nature makes it difficult to set specific style guidelines for LabVIEW code. Some conventions are already imposed upon the programmer, but the visual layout of the blocks and wires themselves is completely up to the programmer. ``Spaghetti code'' that looks like a literal pile of spaghetti can quickly ensue if you are not careful to organize the blocks and wires in a logical, readable fashion. A general rule: If you cannot understand the code that you wrote yesterday, you need to put more effort into organizing your code layout. Of course, this rule applies to text-based languages as well!
 \end{description}
 
 \section{Source Code Style and Conventions}
 \label{sec:codestyle}
-This section focuses on the detailed mechanics of the style of GOFIRST source code. The term \textdef{style} as it is used here means the positioning, layout, whitespace, and naming aspects of source code not directly specified by the program's logical structure. Source code style is meant to facilitate the reading, understanding, and modification of a source code file. A source file can compile to a completely correct, consistent program and still be difficult or impossible to read, which is why programmers generally hold themselves to some sort of style guide, whether explicity written or not. 
+This section focuses on the detailed mechanics of the style of GOFIRST source code. The term \textdef{style} as it is used here means the positioning, layout, whitespace, and naming aspects of source code not directly specified by the program's logical structure. Source code style is meant to facilitate the reading, understanding, and modification of a source code file. A source file can compile to a completely correct, consistent program and still be difficult or impossible to read. This is why programmers generally hold themselves to some sort of style guide, whether explicity written or not.
+
+So as not to reinvent the wheel, this document references some already established and well-known standards; they are listed in Appendix \ref{sec:references} at the end of this document.
 
 \textit{This section to be expanded soon.}
+
+\subsection{Comments}
+
+\subsection{Whitespace}
+\label{sec:spacing}
+The issue of whitespace is often so contentious that it is a good idea to set detailed and consistent rules for its use throughout source code.
+
+Please read the \hyperref[pyguide]{Python style guide}, section "Whitespace in Expressions and Statements". For C-syntax code, hold yourself to these rules where they are applicable to your language. For Python code, you should observe the entire style guide anyway.
+
+\subsubsection{Spaces vs. Tabs}
+For indentation, use four spaces and no tabs. To repeat, your source files should \emph{not} contain the Tab character. Often, stupid "holy wars" flare up about what style of indentation is preferable or even superior; setting a convention throughout the project and sticking with it is the best way to avoid needless disputes, even if it inconveniences some developers' workflows. The spaces vs. tabs issue mostly comes down to personal preference and there is not much to be gained in a technical sense by choosing one convention over the other. I chose spaces because of a minor technical reason relating to the continuation of long lines of code (although you could probably make a convincing technical argument either way): Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are often a recipe for disaster (different editors sometimes throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
+
+So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
+%TODO Instuctions for various editors
+
+\subsubsection{Line Continuation}
+Our limit on line length necessitates a consistent convention for the whitespace mechanics of line continuation. The Python style guide, section ``Code lay-out'' subsection ``Indentation'' suggests a convention for continuing long function calls or mult-line constructs. The hanging-indent convention, a variant on the ``Pretty-Printing'' convention from Lisp-like languages, is preferred. For the hanging indent, please use one indent (4 extra spaces) in addition to the indent level that a normal line in that position would have. For example, if you are writing a long function declaration (the first logical line of the definition, which specifies the function name, arguments, and sometimes the return type) that wraps onto the next line (or lines), indent the continuation \emph{two} levels (8 spaces) farther in than the first line of the declaration, like so:
+\begin{codeex}
+// Function declaration
+VisionInterface:: VisionInterface(
+        Matx33f cameraMat, Mat distCoeffs, Matx33f perspTrans,
+        std::string camAddress) :
+        cameraMat(cameraMat), distCoeffs(distCoeffs), perspTrans(perspTrans) {
+    // Start of function body
+    if (!source.open(camAddress)) {
+\end{codeex}
+The first line following a function declaration is normally indented in one level relative to the line above it; the extra indent is necessary to distinguish the continuation of the declaration line from the first line of the function body that would normally occupy that place.
+
+\subsection{Line Length} The \emph{maximum} amount of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
+
+The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
 
 \section{Technical Notes}
 \subsection{File Encoding}
@@ -105,10 +144,6 @@ Using Unicode strings in programming storage and communications is a little tric
 
 \subsection{Line Endings} Line-endings usually aren't a problem if your editor is not Notepad (if it is, shame on you; go see Appendix \ref{sec:editors}). However, in order to preempt any possible problems or inconsistencies, please use the automation facilities available to you. The Git version control system includes transparent handling for line ending formatting. If you are working on Windows, make sure you set Git's \var{core.autocrlf} setting to \var{true} (You can do this by typing \commandline{git config \clloption{global} core.autocrlf true} into the Git Bash prompt).
 
-\subsection{Line Length} The \emph{maximum} amount of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. \\
-
-The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
-
 \subsection{Git setup} Please set up your Git settings so that your commits are tagged with your name and email. This is useful if we want to know who made a certain change e.g. to find out what it was intended to do. You can set this up by typing:
         \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"}
         \commandline{git config \clloption{global} user.email\\
@@ -117,30 +152,20 @@ into the Unix or Git Bash command line.
 
 \subsection{General Rules} We have programmers using different systems (primarily *nix, but occasionally Mac and Windows), so if you have a choice between convenience and compatibility you should almost always choose compatibility.
 
-\section{Whitespace}
-\label{sec:spacing}
-The issue of whitespace is so contentious that it is a good idea to dedicate a section specifically to this topic.
-
-Please read the \hyperref[pyguide]{Python style guide}, sections "Code lay-out" and "Whitespace\ldots" (you can ignore the "Imports" subsection since it is Python-specific). These rules apply well both to Python and C-syntax code, so please observe them.
-
-Yes, Python is quite different from other languages in terms of handling whitespace, but imposing a standard on how whitespace can be used to emphasize code structure is a good thing in any programming language. For one, it quells the stupid "holy wars" on what style of indentation is preferable, or even superior. If you want a good reason to use spaces instead of tabs, consider the case of continuation of long lines of code. Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are often a recipe for disaster (different editors sometimes throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
-
-So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
-%TODO Instuctions for various editors
-
 \section{Miscellaneous Recommendations}
 This is a miscellaneous collection of recommendations concerning programming in general, and not any specific language.
 \begin{itemize}
-    \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
-        \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
+    \item Version control: Just use it. Learn a modern version control system (in GOFIRST we use Git) and use it for every software project on which you ever work. These systems give you a complete history of the revisions your software has seen (as long as you commit often enough!), allowing the recovery of lost work, faster fixing of bugs, and in general saving you hours and hours of development time in every project, big or small.
     \item ``Magic Numbers:'' It's generally considered bad practice to embed numbers other than 0, 1, 2, or -1 directly into a program's control flow, rather than as constants at the global, file, or class level. Other numbers (integers!) that are tied closely with the structure of the surrounding code block (for instance, as an increment for a step of a specific algorithm) are exempt from this rule \emph{if} this use is documented with a comment briefly explaining the significance of the value. Just writing a statement like \code{increment = sensorLevel * 67} (example in Java) will leave anyone else who reads the code scratching their head trying to figure out just what on Earth the value 67 even \emph{means} in this context. Even worse, if the value 67 is used at multiple points throughout the code, and tests determine that a value of 72 gives more accurate results, replacing every single occurrence of the value would be a pain. And no, find-and-replace is often not an option if the example were using a more common value, such as 4, which you really wouldn't want to replace throughout your project. It would be much better to first declare 67 as a constant at the top of the class: \code{public static final int sensorScaling = 67}, then using \code{increment = sensorLevel * sensorScaling}. This way, the semantics of the sensor scaling value are made a bit more clear (and can be made even more clear by a comment next to the constant). Also, changing the scaling to 72 is nearly trivial, and tuning this value experimentally is much easier than it would be in the previous example.
 %TODO Overcommenting, self-documenting code, and premature optimization are all ripe topics
+    \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
+        \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
 \end{itemize}
 
 \appendix
 \section{Editor and IDE recommendations}
 \label{sec:editors}
-This section lists some text editors and Integrated Development Environments (IDEs) that members of GOFIRST have found to be useful and productive for programming diverse languages on the different platforms.
+This section lists some text editors and Integrated Development Environments (IDEs) that members of GOFIRST have found to be useful and productive for programming diverse languages on different platforms.
 \subsection{Text editors by platform}
 \begin{description}
     \item[Windows] \hfill \\
@@ -185,10 +210,10 @@ This section lists some text editors and Integrated Development Environments (ID
         Search the web and use your best judgement :)
 \end{description}
 
-\appendix
-\section{References}
+%TODO switch to BibTeX
+\section{Bibliography}
 \label{sec:references}
-So as not to reinvent the wheel, we will be holding ourselves to some already established and well-known standards. Also listed here are a few lighthearted presentations of general tips on programming.
+This is a list (with commentary) of the documents and Web resources referred to throughout the body of this document. Also listed here are a few lighthearted presentations of general tips on programming.
 \begin{itemize}
     \item Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
         This is a good, but not perfect, introduction to basic style for Java source code. It provides a guide for the general ``cosmetics'' of source code files in C-like languages so programmers don't have to fight with something as trivial and infuriating as brace placement. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
