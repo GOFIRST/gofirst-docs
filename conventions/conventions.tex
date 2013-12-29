@@ -86,6 +86,22 @@ Commands you type at the operating system command line interface (ordinary termi
 If there is something in one of these command lines or program snippets you need to fill in yourself it will be indicated with \textit{italics}. For example, \commandline{git config \clloption{global} user.name "\toreplace{Your Name}"} means you should replace \toreplace{Your Name} with your actual name (but leave the quotes as they are; those aren't emphasized).
 
 Command lines that are too long to fit on this page are continued on the immediately following line and without a leading \texttt{\$}, like so: \commandline{foo bar baz \clloption{quux} \clloption{blah} \toreplace{File Name Here}\\\clloption{hippopotomonstrosesquipedaliophobia}} To type such a command line into the terminal, ignore the line break (replace it with a single space) or use your terminal's line-continuation character if you know what that is.
+
+Longer examples of program code are typeset in a frame approximately 80 charaters wide, to mimic the actual appearance of code in a text editor. Omissions are indicated by an ellipsis (\texttt{\ldots}) on its own line. For example:
+\begin{codeex}
+VisionPacket VisionInterface:: getPacket() {
+    ...
+    // Exclude the sky
+    rectangle(lines, Point(0, 0), Point(obsts.cols, params.hrzHeight),
+             Scalar(0), CV_FILLED);
+
+    // Find the contours and send the packet on its way
+    vector<Mat> contours;
+    VisionAlg:: findLineContours(lines, contours, lineOpenKrn);
+    ...
+    //// This comment was cleverly devised to be exactly eighty characters long.
+\end{codeex}
+The frame is the same as that used for section headings; however, the different font styles in each type of frame should be sufficient to distinguish them.
 \section{Language Classes}
 This section lists the classes of languages that will be discussed in this document.
 \begin{description}
@@ -105,7 +121,18 @@ So as not to reinvent the wheel, this document references some already establish
 
 \textit{This section to be expanded soon.}
 
+\subsection{General}
+The general GOFIRST code style bases on two style manuals: The Java style guide for C-syntax languages and the Python style guide for Python; both are listed in Appendix \ref{sec:references}.
+
+For Python, the entire style guide applies. Please read it in its entirety if you plan on working with Python at all.
+
+For C-syntax languages, please read the Java style guide, sections 4-9. Also, observe section 3 insofar as it applies to your language, and take section 10 with a grain of salt. It contains good advice, but not all of it is applicable to or compatible with languages besides Java. Finally, I have one important disagreement with Section 4.2 of the guide: Lines should be broken \emph{after} binary operators, not before. This is the most important conflict between GOFIRST style and the Java style guide, so it's worth mentioning it here even though it's covered in the points below.
+
+For both language classes, the specific recommendations in this section \emph{override} any conflicting recommendations in the applicable style guide. To repeat, if there is any conflict between the points below and one of the two online style guides, this guide wins.
+
 \subsection{Comments}
+
+\emph{This section to be expanded soon.}
 
 \subsection{Whitespace}
 \label{sec:spacing}
