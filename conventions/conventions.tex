@@ -101,7 +101,7 @@ VisionPacket VisionInterface:: getPacket() {
     ...
     //// This comment was cleverly devised to be exactly eighty characters long.
 \end{codeex}
-The frame is the same as that used for section headings; however, the different font styles in each type of frame should be sufficient to distinguish them.
+The frame is the same as that used for section headings; however, the different font styles in each type of frame should be sufficient to distinguish the two types of constructs.
 \section{Language Classes}
 This section lists the classes of languages that will be discussed in this document.
 \begin{description}
@@ -130,9 +130,57 @@ For C-syntax languages, please read the Java style guide, sections 4-9. Also, ob
 
 For both language classes, the specific recommendations in this section \emph{override} any conflicting recommendations in the applicable style guide. To repeat, if there is any conflict between the points below and one of the two online style guides, this guide wins.
 
-\subsection{Comments}
+\subsection{C/C++ Features}
+The languages C and C++ contain syntactic elements that are not present in Java, such as pointers and (for C++) templates. Also, the syntax for class definitions (especially when inheritance is involved) is somewhat different. This subsection sets conventions for using those features.
 
-\emph{This section to be expanded soon.}
+The C++ language also has the peculiarity that two styles of class declaration are possible: One with the declarations in a header file and implementations in a C++ source file of the same name, and one with the entire class declaration and definition \textdef{inline} in a single C++ source file. The former is preferred, as it is impossible to \code{\#include} C++ source files in other files.
+
+Another C++ peculiarity is that multiple extension types are possible for source files. Use \code{.cpp} for C++ source code (implementation) files, \code{.h} for C or C++ header files. If the project mixes C and C++ code (not recommended unless it's absolutely necessary), you may use \code{.hpp} for header files to indicate that they cannot be parsed by a plain C compiler.
+
+The possibility of multiple inclusion of C++ header files in even moderately-sized projects can often cause problems with multiple definitions. To avoid this, use \textdef{header guards} to prevent the file from being included more than once. They look like this:
+\begin{codeex}
+// Beginning of file
+// Include statements, ``using'' namespace-related statements
+...
+#ifndef HEADERFILE_H_
+#define HEADERFILE_H_
+// Declarations for functions, variables, and classes
+...
+#endif
+// End of file
+\end{codeex}
+The name of the defined constant should be related to the name of the header file in the following way: Put the name of the file in all caps, replace the period with an underscore, and add a trailing underscore. So the file \code{BufferThreadedP.h} should have a line like \code{\#ifndef BUFFERTHREADEDP\_H\_} in it.
+
+\subsection{Comments}
+Comments serve several different purposes in source code. A good enumeration of the various types can be found in Steve McConnell's ``Code Complete'' (the standard textbook for the U of MN introductory course in program design and development, CSCI 3081W). The Python style guide, section ``Comments'' (ignore the parts specific to Python syntax) provides a more concise overview; please read it. In short: Comments should \emph{not} repeat the code. Comments should \emph{never} contradict the code. Comments should not attempt to explain confusing code; please use tools such as variable names and defined constants to make your intent more clear. Comments are often helpful when used as headers for distinct logical sections of code. \textdef{Summary comments} and \textdef{documentation comments} (block comments, function comments) are more useful than \textdef{inline comments}.
+
+\emph{Every} function and \emph{every} class needs a \textdef{documentation comment} explaining what it does and how to use it, including a short description of each of the parameters and of the return type (if applicable). Such comments should be in a format that Doxygen (ref needed) can parse. Please use the convention of comments starting with \code{/**}. An example of a well-formed Doxygen comment in C++ is:
+\begin{codeex}
+/**
+ * Find contours in the input binary image; first applying a morphological
+ * open operator to remove small artifacts resulting from the detection
+ * procedure.
+ *
+ * \param img Input binary image of detected lines, possibly including thin
+ *        borders and other artifacts. This array will be modified by the
+ *        morphological transformation.
+ * \param contours Place to store the resulting contours
+ * \param openKrn Morphological kernel for removing borders and artifacts
+ *
+ * \return The number of contours found.
+ */
+int VisionAlg:: findLineContours(
+        InputOutputArray lines,
+        OutputArrayOfArrays contours, InputArray openKrn) {
+    // Use morphology to get rid of the small borders
+    morphologyEx(lines, lines, MORPH_OPEN, openKrn);
+    ...
+\end{codeex}
+The type and purpose of the returned data does not need to be explained for constructors, or if the function does not return anything (or returns \code{void}).
+
+\subsection{Line Length} The \emph{maximum} number of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
+
+The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
 
 \subsection{Whitespace}
 \label{sec:spacing}
@@ -156,14 +204,17 @@ VisionInterface:: VisionInterface(
         cameraMat(cameraMat), distCoeffs(distCoeffs), perspTrans(perspTrans) {
     // Start of function body
     if (!source.open(camAddress)) {
+    ...
 \end{codeex}
 The first line following a function declaration is normally indented in one level relative to the line above it; the extra indent is necessary to distinguish the continuation of the declaration line from the first line of the function body that would normally occupy that place.
 
-\subsection{Line Length} The \emph{maximum} amount of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
-
-The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
+\subsubsection{Blank Lines}
+No more than necessary, but please do use them to separate logical ``paragraphs'' of code (e.g. 5-10 lines inside a function that perform a distinct task). Do not use blank lines directly after a function declaration line.
+\subsubsection{Miscellaneous Notes}
+Avoid whitespace at the end of lines. This makes it harder to copy and paste entire lines in some editors. If your editor has a feature to make trailing spaces visible, turn it on.
 
 \section{Technical Notes}
+The notes below don't necessarily relate to the layout and style of code; however, they are still important for compatibility and standardization purposes.
 \subsection{File Encoding}
 Please use \textdef{UTF-8} for general symbol support and inter-system compatibility. No, I don't anticipate any need to write comments in Russian, Finnish, or Japanese; nevertheless, it is the modern, extensible way to encode text in a file. Also, the encoding happens to coincide with ASCII over the entire set of 128 pure ASCII characters, so you have no excuse.
 
@@ -185,6 +236,7 @@ This is a miscellaneous collection of recommendations concerning programming in 
     \item Version control: Just use it. Learn a modern version control system (in GOFIRST we use Git) and use it for every software project on which you ever work. These systems give you a complete history of the revisions your software has seen (as long as you commit often enough!), allowing the recovery of lost work, faster fixing of bugs, and in general saving you hours and hours of development time in every project, big or small.
     \item ``Magic Numbers:'' It's generally considered bad practice to embed numbers other than 0, 1, 2, or -1 directly into a program's control flow, rather than as constants at the global, file, or class level. Other numbers (integers!) that are tied closely with the structure of the surrounding code block (for instance, as an increment for a step of a specific algorithm) are exempt from this rule \emph{if} this use is documented with a comment briefly explaining the significance of the value. Just writing a statement like \code{increment = sensorLevel * 67} (example in Java) will leave anyone else who reads the code scratching their head trying to figure out just what on Earth the value 67 even \emph{means} in this context. Even worse, if the value 67 is used at multiple points throughout the code, and tests determine that a value of 72 gives more accurate results, replacing every single occurrence of the value would be a pain. And no, find-and-replace is often not an option if the example were using a more common value, such as 4, which you really wouldn't want to replace throughout your project. It would be much better to first declare 67 as a constant at the top of the class: \code{public static final int sensorScaling = 67}, then using \code{increment = sensorLevel * sensorScaling}. This way, the semantics of the sensor scaling value are made a bit more clear (and can be made even more clear by a comment next to the constant). Also, changing the scaling to 72 is nearly trivial, and tuning this value experimentally is much easier than it would be in the previous example.
 %TODO Overcommenting, self-documenting code, and premature optimization are all ripe topics
+    \item Don't rely on letter case to distinguish between two unique identifiers. For example, if you have already defined a variable called \code{httpConn}, don't make another variable called \code{HTTPconn}. Many languages regard these two identifiers as distinct, but you shouldn't. For one, it's hard to remember exactly what case you used for what variable. It's also not portable to case-insensitive languages or situations where the case is stripped from the name (as in the case of constant names for header guards).
     \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
         \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
 \end{itemize}
