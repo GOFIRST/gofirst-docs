@@ -8,6 +8,8 @@
 \usepackage{droid}
 \usepackage[defaultmono]{droidmono}
 \usepackage{fancyvrb}
+\usepackage{textcomp}
+\usepackage{wasysym}
 
 % Custom stylistic preferences
 \usepackage{parskip}
@@ -41,7 +43,7 @@ citecolor=blue
     \today
 }
 \lfoot{
-\footnotesize{Copyright © 2012-\the\year GOFIRST. All rights reserved.}
+\footnotesize{Copyright © 2012-\the\year  GOFIRST. All rights reserved.}
 }
 \rfoot{Page \textbf{\thepage} of \pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
@@ -102,6 +104,11 @@ VisionPacket VisionInterface:: getPacket() {
     //// This comment was cleverly devised to be exactly eighty characters long.
 \end{codeex}
 The frame is the same as that used for section headings; however, the different font styles in each type of frame should be sufficient to distinguish the two types of constructs.
+
+This last note is not really a typographical convention, but a note from the author: I sometimes slip into the first person while writing documentation or programming tips. You can safely assume that any use of the first person singular refers to Max Veit, the original author of this document. The first-person plural refers to the GOFIRST programming team as a whole.
+
+\subsection{Improvements and Changes}
+If you can suggest any changes to this document that you think would be helpful, I would appreciate it if you could contact me (the author) at the email address \texttt{max d veit at-sign gmail dot com} (delete the first two spaces and make the obvious textual substitutions).
 \section{Language Classes}
 This section lists the classes of languages that will be discussed in this document.
 \begin{description}
@@ -119,10 +126,8 @@ This section focuses on the detailed mechanics of the style of GOFIRST source co
 
 So as not to reinvent the wheel, this document references some already established and well-known standards; they are listed in Appendix \ref{sec:references} at the end of this document.
 
-\textit{This section to be expanded soon.}
-
 \subsection{General}
-The general GOFIRST code style bases on two style manuals: The Java style guide for C-syntax languages and the Python style guide for Python; both are listed in Appendix \ref{sec:references}.
+The general GOFIRST code style bases on two style manuals: The Java style guide for C-syntax languages \cite{javacon} and the Python style guide for Python \cite{pyguide}; both are listed in Appendix \ref{sec:references}.
 
 For Python, the entire style guide applies. Please read it in its entirety if you plan on working with Python at all.
 
@@ -130,10 +135,15 @@ For C-syntax languages, please read the Java style guide, sections 4-9. Also, ob
 
 For both language classes, the specific recommendations in this section \emph{override} any conflicting recommendations in the applicable style guide. To repeat, if there is any conflict between the points below and one of the two online style guides, this guide wins.
 
+One exception to the above rule is C\# code, for which the Microsoft coding conventions \cite{csguide} apply. The C\# language is not heavily used in GOFIRST projects as of the start of the 2014 season and as such, the extent to which the C\# guide applies to GOFIRST code has not been extensively discussed. Thankfully, there are few conflicts regarding general (language-inspecific) guidelines. For now, both style guides are taken to apply to C\# code, with conflicts being resolved in favor of the C\# guide. This convention makes it easier to work with C\# code within Microsoft's Visual Studio IDE, the only development environment currently used for C\# code in GOFIRST. This document (as well as parts of the Java guide) serves to cover omissions or unspecific points in Microsoft's guide.
+
 \subsection{C/C++ Features}
+\label{sec:ccpp-special}
 The languages C and C++ contain syntactic elements that are not present in Java, such as pointers and (for C++) templates. Also, the syntax for class definitions (especially when inheritance is involved) is somewhat different. This subsection sets conventions for using those features.
 
-The C++ language also has the peculiarity that two styles of class declaration are possible: One with the declarations in a header file and implementations in a C++ source file of the same name, and one with the entire class declaration and definition \textdef{inline} in a single C++ source file. The former is preferred, as it is impossible to \code{\#include} C++ source files in other files.
+First of all, there may be some features that are not covered in this subsection (yet). For those features, the style set by the code examples and tutorials available at \url{http://cplusplus.com} should serve as an adequate guide until those features can be added here.
+
+The C++ language has the peculiarity that two styles of class declaration are possible: One with the declarations in a header file and implementations in a C++ source file of the same name, and one with the entire class declaration and definition \textdef{inline} in a single C++ source file. The former is preferred, as it is impossible to \code{\#include} C++ source files in other files.
 
 Another C++ peculiarity is that multiple extension types are possible for source files. Use \code{.cpp} for C++ source code (implementation) files, \code{.h} for C or C++ header files. If the project mixes C and C++ code (not recommended unless it's absolutely necessary), you may use \code{.hpp} for header files to indicate that they cannot be parsed by a plain C compiler.
 
@@ -152,22 +162,24 @@ The possibility of multiple inclusion of C++ header files in even moderately-siz
 The name of the defined constant should be related to the name of the header file in the following way: Put the name of the file in all caps, replace the period with an underscore, and add a trailing underscore. So the file \code{BufferThreadedP.h} should have a line like \code{\#ifndef BUFFERTHREADEDP\_H\_} in it.
 
 \subsection{Comments}
-Comments serve several different purposes in source code. A good enumeration of the various types can be found in Steve McConnell's ``Code Complete'' (the standard textbook for the U of MN introductory course in program design and development, CSCI 3081W). The Python style guide, section ``Comments'' (ignore the parts specific to Python syntax) provides a more concise overview; please read it. In short: Comments should \emph{not} repeat the code. Comments should \emph{never} contradict the code. Comments should not attempt to explain confusing code; please use tools such as variable names and defined constants to make your intent more clear. Comments are often helpful when used as headers for distinct logical sections of code. \textdef{Summary comments} and \textdef{documentation comments} (block comments, function comments) are more useful than \textdef{inline comments}.
+Comments serve several different purposes in source code. A good, thorough enumeration of the various types can be found in Steve McConnell's ``Code Complete''~\cite{codecomplete}. The Python style guide~\cite{pyguide}, section ``\href{http://www.python.org/dev/peps/pep-0008/#comments}{Comments}'' (ignore the parts specific to Python syntax) provides a more concise overview; please read it. In short: Comments should \emph{not} repeat the code. Comments should \emph{never} contradict the code. Make a priority of updating the comments to reflect the code, preferably before every commit.
 
-\emph{Every} function and \emph{every} class needs a \textdef{documentation comment} explaining what it does and how to use it, including a short description of each of the parameters and of the return type (if applicable). Such comments should be in a format that Doxygen (ref needed) can parse. Please use the convention of comments starting with \code{/**}. An example of a well-formed Doxygen comment in C++ is:
+Comments should not attempt to explain confusing code; please use tools such as variable names and defined constants to make your intent more clear. Comments are often helpful when used as headers for distinct logical sections of code. \textdef{Summary comments} and \textdef{documentation comments} (block comments, function comments) are more useful than \textdef{inline comments} (or one-line non-summary comments).
+
+\emph{Every} function and \emph{every} class needs a \textdef{documentation comment} explaining what it does and how to use it, including a short description of each of the parameters and of the return type (if applicable). Such comments should be in a format that Doxygen \cite{doxyguide} can parse. Please use the Javadoc-style convention of comments starting with \code{/**}. Commands start with an at-sign (\code{@}). An example of a well-formed Doxygen comment in C++ is:
 \begin{codeex}
 /**
  * Find contours in the input binary image; first applying a morphological
  * open operator to remove small artifacts resulting from the detection
  * procedure.
  *
- * \param img Input binary image of detected lines, possibly including thin
+ * @param img Input binary image of detected lines, possibly including thin
  *        borders and other artifacts. This array will be modified by the
  *        morphological transformation.
- * \param contours Place to store the resulting contours
- * \param openKrn Morphological kernel for removing borders and artifacts
+ * @param contours Place to store the resulting contours
+ * @param openKrn Morphological kernel for removing borders and artifacts
  *
- * \return The number of contours found.
+ * @return The number of contours found.
  */
 int VisionAlg:: findLineContours(
         InputOutputArray lines,
@@ -178,6 +190,45 @@ int VisionAlg:: findLineContours(
 \end{codeex}
 The type and purpose of the returned data does not need to be explained for constructors, or if the function does not return anything (or returns \code{void}).
 
+The Doxygen commenting convention for Python has not yet been decided. Two conventions are available, one is compatible with the Python \code{docstring} utility but does not support any Doxygen special commands. The other abandons the \code{docstring} convention to add special-command support.
+
+\textdef{Inline comments} in Doxygen style should only be used in one of the following situations:
+\begin{itemize}
+    \item After variable declarations that really, desperately, need a longer description in the documentation.
+    \item Directly after members of enumerations (``enums'') that require a longer description in the documentation.
+\end{itemize}
+In any case, first try to obviate the need for an inline comment by choosing a better name for the variable or member. If this is not practical, you may use an inline comment in Doxygen format, like so:
+\begin{codeex}
+OutputArrayOfArrays contours; /**< Place to store the resulting contours */
+\end{codeex}
+If your comment pushes the line over the 79-character limit, place the comment on the line above (the \code{<} mark is no longer needed):
+\begin{codeex}
+/** Morphological kernel for removing borders and artifacts */
+InputArray openKrn;
+\end{codeex}
+
+For more details, see the Doxygen manual \cite{doxyguide} section ``\href{http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html#specialblock}{Special comment blocks}''.
+\subsection{Copyright Notice and Legal Issues}
+All source code files should have the following notice\footnote{Technical notes: Fit the comment style to whatever language you are using; just make sure Doxygen recognizes it. The special Doxygen commands (author, copyright) are preferred, but not required. The copyright sign (\code{©}) may be replaced in code by \code{(c)} if necessary. As a reminder, you can always copy and paste the symbol from other code files.}
+as a comment in Doxygen format at or near the top:
+\begin{codeex}[commandchars=\\\{\}]
+/**
+ * \toreplace{Documentation of file, if necessary}
+ ...
+ * @author \toreplace{Author Name}
+ * \toreplace{Additional @author lines for additional authors, if any}
+ * @copyright Copyright © \toreplace{Year(s)} GOFIRST. All rights reserved.
+ * \toreplace{Additional licensing info, if any}
+ ...
+ */
+\end{codeex}
+The copyright is necessary, or at least a good idea, because it protects our intellectual property rights over the code. The use of the term ``intellectual property'' doesn't mean the code is to be kept proprietary; on the contrary, it mostly refers to our right to be credited as the author(s) of the code. Most free-software licenses, for example, use copyright as an enforcement tool. It prevents others from ripping off the code and claiming it as their own for the purpose of personal credit or profit. As we haven't yet decided how to license our code, a copyright with all rights reserved is the safest option. Don't worry; whatever license we choose, we will make sure your authorship of the code is recognized and credited.
+
+Claiming authorship is somewhat of a subjective issue; if you have made a significant contribution to the code in the file, you may list yourself as an author. The first author listed should be the current primary maintainer of the code in the file, if such exists. In case any conflict should arise, the definition of ``significant'', and thus of issues of authorship in general, are taken to be a matter of consensus among active developers of the project (``active'' meaning they are active members of GOFIRST and have directly participated in the software development of the project in question during the current academic year).
+
+If you wish to claim \emph{copyright} over a certain section or file of code (rather than transferring copyright to GOFIRST\footnote{Honestly, I'm not sure if such a transfer is legally possible without an explicit written agreement, or what even counts as a written agreement under copyright law. Before we discuss licensing and/or publishing our code we must also discuss copyright law as it applies to our situation and prepare a written agreement for transfer of copyright if necessary.}
+- this issue is mostly distinct from authorship credit), please first discuss it with the other active developers of the project, including GOFIRST's Director of Engineering (or, should that position no longer exist at this time, the equivalent or successor position). The issue of transfer of copyright as it applies to GOFIRST software development must still be clarified, preferably in a meeting of the GOFIRST officers and any interested GOFIRST developers. As far as I can tell, you have the right to copyright a code file as your own that you alone authored, as long as you have not waived that right in a previous written agreement. If you claim copyright, you also have the right to license the code file however you please. However, your fellow developers will appreciate it if you would let them know if you plan to claim this right.
+
 \subsection{Line Length} The \emph{maximum} number of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
 
 The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
@@ -186,7 +237,7 @@ The only exception here is the source code for documentation to be typeset with 
 \label{sec:spacing}
 The issue of whitespace is often so contentious that it is a good idea to set detailed and consistent rules for its use throughout source code.
 
-Please read the \hyperref[pyguide]{Python style guide}, section "Whitespace in Expressions and Statements". For C-syntax code, hold yourself to these rules where they are applicable to your language. For Python code, you should observe the entire style guide anyway.
+Please read the Python style guide \cite{pyguide}, section ``\href{http://www.python.org/dev/peps/pep-0008/#whitespace-in-expressions-and-statements}{Whitespace in Expressions and Statements}''. For C-syntax code, hold yourself to these rules where they are applicable to your language. For Python code, you should observe the entire style guide anyway.
 
 \subsubsection{Spaces vs. Tabs}
 For indentation, use four spaces and no tabs. To repeat, your source files should \emph{not} contain the Tab character. Often, stupid "holy wars" flare up about what style of indentation is preferable or even superior; setting a convention throughout the project and sticking with it is the best way to avoid needless disputes, even if it inconveniences some developers' workflows. The spaces vs. tabs issue mostly comes down to personal preference and there is not much to be gained in a technical sense by choosing one convention over the other. I chose spaces because of a minor technical reason relating to the continuation of long lines of code (although you could probably make a convincing technical argument either way): Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are often a recipe for disaster (different editors sometimes throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
@@ -195,7 +246,7 @@ So please, for the sake of consistency, set your editor to expand tabs to spaces
 %TODO Instuctions for various editors
 
 \subsubsection{Line Continuation}
-Our limit on line length necessitates a consistent convention for the whitespace mechanics of line continuation. The Python style guide, section ``Code lay-out'' subsection ``Indentation'' suggests a convention for continuing long function calls or mult-line constructs. The hanging-indent convention, a variant on the ``Pretty-Printing'' convention from Lisp-like languages, is preferred. For the hanging indent, please use one indent (4 extra spaces) in addition to the indent level that a normal line in that position would have. For example, if you are writing a long function declaration (the first logical line of the definition, which specifies the function name, arguments, and sometimes the return type) that wraps onto the next line (or lines), indent the continuation \emph{two} levels (8 spaces) farther in than the first line of the declaration, like so:
+Our limit on line length necessitates a consistent convention for the whitespace mechanics of line continuation. The Python style guide \cite{pyguide}, section ``Code lay-out'' subsection ``\href{http://www.python.org/dev/peps/pep-0008/#indentation}{Indentation}'' suggests a convention for continuing long function calls or mult-line constructs. The hanging-indent convention, a variant on the ``Pretty-Printing'' convention from Lisp-like languages, is preferred. For the hanging indent, please use one indent (4 extra spaces) in addition to the indent level that a normal line in that position would have. For example, if you are writing a long function declaration (the first logical line of the definition, which specifies the function name, arguments, and sometimes the return type) that wraps onto the next line (or lines), indent the continuation \emph{two} levels (8 spaces) farther in than the first line of the declaration, like so:
 \begin{codeex}
 // Function declaration
 VisionInterface:: VisionInterface(
@@ -209,9 +260,15 @@ VisionInterface:: VisionInterface(
 The first line following a function declaration is normally indented in one level relative to the line above it; the extra indent is necessary to distinguish the continuation of the declaration line from the first line of the function body that would normally occupy that place.
 
 \subsubsection{Blank Lines}
-No more than necessary, but please do use them to separate logical ``paragraphs'' of code (e.g. 5-10 lines inside a function that perform a distinct task). Do not use blank lines directly after a function declaration line.
-\subsubsection{Miscellaneous Notes}
+No more than necessary, but please do use them to separate logical ``paragraphs'' of code (e.g. 5-10 lines inside a function that perform a distinct task). At the top level, use two blank lines in between function definitions as well as between distinct sections of code with different purposes, e.g. between the \code{\#include} section and the top-level variable or function declarations. Within a class, use one blank line between each function definition and to separate a block of declarations from the function definitions. Do not use blank lines directly after a function declaration.
+
+\subsubsection{Miscellaneous Whitespace Notes}
 Avoid whitespace at the end of lines. This makes it harder to copy and paste entire lines in some editors. If your editor has a feature to make trailing spaces visible, turn it on.
+
+\subsection{File Naming}
+Source files for C-syntax languages should be named after the main class in the file, with exactly the same case, and the standard extension for the file type (see Section \ref{sec:ccpp-special} for file extensions for C++). In the case of Java, this convention is enforced by the compiler; the name of the file must be the same as the unique public class residing in that file (there can only be one). For other languages, name the file after the logically dominant or most important class in the file; this is usually (but not always) the first class defined in the file. If your language uses header files, always give the source/implementation file the same name as the associated header file (should one exist), modulo extension.
+
+Python follows a different file naming convention. Files are associated with Python \textdef{modules}; a module is more or less the runtime version of a Python file, and has the same name as the associated file with the \code{.py} suffix stripped. The naming conventions for Python modules (files) and packages are specified in the Python style guide \cite{pyguide}, section ``Naming Conventions'' subsection ``\href{http://www.python.org/dev/peps/pep-0008/#package-and-module-names}{Package and Module Names}''.
 
 \section{Technical Notes}
 The notes below don't necessarily relate to the layout and style of code; however, they are still important for compatibility and standardization purposes.
@@ -232,77 +289,88 @@ into the Unix or Git Bash command line.
 
 \section{Miscellaneous Recommendations}
 This is a miscellaneous collection of recommendations concerning programming in general, and not any specific language.
-\begin{itemize}
-    \item Version control: Just use it. Learn a modern version control system (in GOFIRST we use Git) and use it for every software project on which you ever work. These systems give you a complete history of the revisions your software has seen (as long as you commit often enough!), allowing the recovery of lost work, faster fixing of bugs, and in general saving you hours and hours of development time in every project, big or small.
-    \item ``Magic Numbers:'' It's generally considered bad practice to embed numbers other than 0, 1, 2, or -1 directly into a program's control flow, rather than as constants at the global, file, or class level. Other numbers (integers!) that are tied closely with the structure of the surrounding code block (for instance, as an increment for a step of a specific algorithm) are exempt from this rule \emph{if} this use is documented with a comment briefly explaining the significance of the value. Just writing a statement like \code{increment = sensorLevel * 67} (example in Java) will leave anyone else who reads the code scratching their head trying to figure out just what on Earth the value 67 even \emph{means} in this context. Even worse, if the value 67 is used at multiple points throughout the code, and tests determine that a value of 72 gives more accurate results, replacing every single occurrence of the value would be a pain. And no, find-and-replace is often not an option if the example were using a more common value, such as 4, which you really wouldn't want to replace throughout your project. It would be much better to first declare 67 as a constant at the top of the class: \code{public static final int sensorScaling = 67}, then using \code{increment = sensorLevel * sensorScaling}. This way, the semantics of the sensor scaling value are made a bit more clear (and can be made even more clear by a comment next to the constant). Also, changing the scaling to 72 is nearly trivial, and tuning this value experimentally is much easier than it would be in the previous example.
 %TODO Overcommenting, self-documenting code, and premature optimization are all ripe topics
-    \item Don't rely on letter case to distinguish between two unique identifiers. For example, if you have already defined a variable called \code{httpConn}, don't make another variable called \code{HTTPconn}. Many languages regard these two identifiers as distinct, but you shouldn't. For one, it's hard to remember exactly what case you used for what variable. It's also not portable to case-insensitive languages or situations where the case is stripped from the name (as in the case of constant names for header guards).
-    \item Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
-        \textbf{Note:} This does not apply to redundant statements that actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. 
-\end{itemize}
+
+\subsection{Version control}
+Just use it. Learn a modern version control system (in GOFIRST we use Git) and use it for every software project on which you ever work. These systems give you a complete history of the revisions your software has seen (as long as you commit often enough!), allowing the recovery of lost work, faster fixing of bugs, and in general saving you hours and hours of development time in every project, big or small. A detailed discussion of how version control should be used in GOFIRST projects is outside the scope of this document.
+
+\subsection{``Magic Numbers''}
+It is generally considered bad practice to embed numbers other than 0, 1, or -1 directly into a program's control flow, rather than as constants at the global, file, or class level. Other numbers (integers!) that are tied closely with the structure of the surrounding code block (for instance, as an increment for a step of a specific algorithm) are exempt from this rule \emph{if} this use is documented with a comment briefly explaining the significance of the value. Just writing a statement like \code{increment = sensorLevel * 67} (example in Java) will leave anyone else who reads the code scratching their head trying to figure out what on Earth the value 67 even \emph{means} in this context. Even worse, if the value 67 is used at multiple points throughout the code and later tests determine that a value of 72 gives more accurate results, replacing every single occurrence of the value would be a pain. And no, find-and-replace is not a good alternative. If the example were using a more common value, such as 4, you really wouldn't want to replace \emph{that} throughout your project. It would be much better to first declare 67 as a constant at the top of the class: \code{public static final int sensorScaling = 67}, then using \code{increment = sensorLevel * sensorScaling}. This way, the semantics of the sensor scaling value are made a bit more clear (and can be made even more clear by a comment next to the constant). Also, changing the scaling to 72 is nearly trivial, and tuning this value experimentally is much easier than it would be in the previous example.
+\subsection{Case Sensitivity}
+Do not rely on letter case to distinguish between two unique identifiers. For example, if you have already defined a variable called \code{httpConn}, don't make another variable called \code{HTTPconn}. Many languages regard these two identifiers as distinct, but you shouldn't. For one, it's hard to remember exactly what case you used for what variable. It's also not portable to case-insensitive languages or situations where the case is stripped from the name (as in the case of names of constants used in header guards).
+\subsection{Defaults, or Explicit Is Better Than Implicit} Just because a certain code construct or statement is redundant in a specific case does not mean you should leave it out, even if the two forms are equivalent \emph{after} compilation. In some cases, leaving out such redundant statements can greatly hinder source code readability. For a simple example, take variable initialization. Java automatically initializes fields (variables belonging to a class) to a default value of \code{0}, \code{false}, or \code{null}, depending on the type. Do \emph{not} rely on other people (or yourself, some time later) to recognize this fact immediately! Another programmer reading the code may be confused by the fact that a variable is used apparently without being initialized, an error in many other languages. Worse still, if this hypothetical programmer doesn't see the code that relies on this implicit assignment, they may change the variable's value elsewhere, creating an incredibly elusive bug. In addition, programmers with relatively little Java experience may not always remember the exact initial assigned value for a field. With integers and objects this is usually easy to figure out, but the boolean value \code{false} is not at all intuitively obvious.\\
+\textbf{Note:} Be more careful if above-mentioned redundant statements can actually worsen the performance of the code, as opposed to those that are automatically compiled away to a more efficient form. Consider the relative impact of readability vs. performance to decide the best option.
 
 \appendix
 \section{Editor and IDE recommendations}
 \label{sec:editors}
 This section lists some text editors and Integrated Development Environments (IDEs) that members of GOFIRST have found to be useful and productive for programming diverse languages on different platforms.
+
 \subsection{Text editors by platform}
-\begin{description}
-    \item[Windows] \hfill \\
-        As mentioned above, you want to move away from Notepad. It's not even good for editing configuration files. One alternative is Notepad++ (\url{http://notepad-plus-plus.org/}). 
-    \item[Mac] \hfill \\
-        The built-in text editor is usable, but unsuited to programming. Luckily, quite a few cross-platform editors integrate well with OSX. You could also try TextWrangler (\url{http://www.barebones.com/products/TextWrangler/}), although I have personally never used it.
-    \item[GNU/Linux] \hfill \\
-        The built-in editors GEdit (GNOME) and Kate (KDE) are both good, extensible, full-featured, and usable for programming in many languages. However, it might be worth it to take a look at some of the cross-platform editors as well.
-    \item[Cross-platform] \hfill \\
-        There are two classic editors for Unix-like systems that have been extensively ported: 
-        \begin{itemize}
-            \item Vim, the "improved version" of Vi (\url{http://www.vim.org}). Max's editor of choice; many people claim it's by far the most efficient editor they've ever used. However, Vim is notorious for its learning curve. If you have a free weekend and feel like learning to use the editor efficiently, check out the program "vimtutor" which should be installed along with the editor (try typing \texttt{:help tutor} after starting Vim). Features include everything you'd expect from a programmer's text editor (syntax highlighting, search/replace with regexes, code folding, and diff to name a few). Built-in support for most known programming languages, often with extensions available for specific languages. Originally designed for use in a terminal, although good graphical versions are available on the download page.
-            \item (x)Emacs (\url{http://www.xemacs.org}), perhaps the more full-featured (according to some, bloated) of the two classic editors. Some people (such as Max; now you know where he stands in the ``editor wars'') find it unusable, although if you're a boss with chained keyboard shortcuts in Word or whatever you might like this editor. Lots of programmer's features and extensions available. It even has a built-in psychologist (try \texttt{M-x doctor} or something like that). The graphical version is xEmacs.
-        \end{itemize}
-        In addition, jEdit (\url{http://www.jedit.org/}) is a full-featured, cross-platform text editor with support for many programming languages. It appears to to work well for editing Java code.
-\end{description}
+\subsubsection{Windows}
+As mentioned above, you want to move away from Notepad. It's not even good for editing configuration files. One alternative is Notepad++ (\url{http://notepad-plus-plus.org/}).
+\subsubsection{Mac OS X}
+The built-in text editor is usable, but unsuited to programming. Luckily, quite a few cross-platform editors integrate well with OSX. You could also try TextWrangler (\url{http://www.barebones.com/products/TextWrangler/}), although I have personally never used it.
+\subsubsection{GNU/Linux, other *nix}
+The built-in editors GEdit (GNOME) and Kate (KDE) are both good, extensible, full-featured, and usable for programming in many languages. However, it might be worth it to take a look at some of the cross-platform editors as well.
+\subsubsection{Cross-Platform}
+There are two classic editors for Unix-like systems that have been extensively ported: 
+\begin{itemize}
+    \item Vim, the "improved version" of Vi (\url{http://www.vim.org}). Max's editor of choice; many people claim it's by far the most efficient editor they've ever used. However, Vim is notorious for its learning curve. If you have a free weekend and feel like learning to use the editor efficiently, check out the program "vimtutor" which should be installed along with the editor (try typing \texttt{:help tutor} after starting Vim). Features include everything you'd expect from a programmer's text editor (syntax highlighting, search/replace with regexes, code folding, and diff to name a few). Built-in support for most known programming languages, often with extensions available for specific languages. Originally designed for use in a terminal, although good graphical versions are available on the download page.
+    \item Emacs (\url{http://www.gnu.org/software/emacs/}), perhaps the more full-featured (according to some, bloated) of the two classic editors. Some people (such as Max; now you know where he stands in the ``editor wars'') find it cumbersome to use, although if you're a boss with chained keyboard shortcuts in Word or whatever you might like this editor. Lots of programmer's features and extensions available. It even has a built-in psychologist (try \texttt{M-x doctor}) in case its keyboard shortcuts give you a nervous breakdown. Usually pre-installed on most *nix systems, available via the terminal and sometimes graphically. For other systems, see \url{http://www.emacswiki.org/emacs/CategoryPorts} and select the version that best fits your system and needs.
+\end{itemize}
+In addition, jEdit (\url{http://www.jedit.org/}) is a full-featured, cross-platform text editor with support for many programming languages. It appears to to work well for editing Java code.
 
 \subsection{IDEs by language}
-\begin{description}
-    \item[Java] \hfill
-        \begin{itemize}
-            \item Eclipse (\url{http://www.eclipse.org/}) is a popular cross-platform IDE for Java and C++ development. It has all the features you'd expect from a standard IDE, plus a (somewhat clumsy) plugin installation system. It can integrate with version control systems such as Git (which we will most likely be using) through the plugin framework. It's a large piece of software -- it's several hundred megabytes and slow to start up on any system. However, many Java (and C++) programmers think the rich feature set, which includes integration with a sort of task-tracking software, is worth it. 
-            \item NetBeans (\url{http://netbeans.org/}) is definitely more lightweight than Eclipse but specializes on Java. It also has a plugin system with a large database of user-contributed plugins (Git support is naturally among them). Some programmers might find the relatively minimalistic approach of NetBeans more appealing than the one-stop-shop philosophy of Eclipse.
-        \end{itemize}
-    \item[C/C++] \hfill
-        \begin{itemize}
-            \item As mentioned above, Eclipse also works well with C++. 
-            \item If you're on a Mac, you could check out XCode (it costs \$ 5 on the Mac App Store). However, it's frustrating to use for development not involving a shiny Mac application. 
-            \item On Windows, Visual Studio is the standard all-in-one IDE available for CSE students for free at \url{http://cselabs.umn.edu/software/msdnaa}. Although designed primarily for Windows development, it's usable for general C/C++ program development.
-        \end{itemize}
-    \item[C\#]
-        (If we do end up using it): 
-        \begin{itemize}
-            \item Those with Windows should use the Microsoft Visual Studio IDE. 
-            \item Those who don't have Windows (or don't want to install it) can try the Mono development environment, see \url{http://www.monodevelop.org/}. 
-        \end{itemize}
-    \item[Python] \hfill \\
-        Again, we might not end up using Python at all, but if we do, here are my IDE recommendations: First, it's perfectly possible to develop Python with nothing but a text editor and terminal (that's what I do, and I prefer it to using an IDE). However, if you're used to using IDEs and want to use one for Python, there is one available: IDLE should be installed with the default Python installation (Linux users might need to install an additional package). It's about as minimalistic as IDEs get; nevetheless, it does simplify and integrate the Python development process. Users new to Python or lacking a decent command-line interface might find this helpful.
-    \item[General] \hfill \\
-        If you like lightweight IDEs, try Geany (\url{http://www.geany.org/}). It's not tied to a specific language, which is both an advantage and a disadvantage depending on your personal preferences. In any case, it's got pretty much everything you need to edit and build most types of source code effectively.
-    \item[Others] \hfill \\
-        Search the web and use your best judgement :)
-\end{description}
 
-%TODO switch to BibTeX
-\section{Bibliography}
-\label{sec:references}
-This is a list (with commentary) of the documents and Web resources referred to throughout the body of this document. Also listed here are a few lighthearted presentations of general tips on programming.
+\subsubsection{Java}
 \begin{itemize}
-    \item Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
-        This is a good, but not perfect, introduction to basic style for Java source code. It provides a guide for the general ``cosmetics'' of source code files in C-like languages so programmers don't have to fight with something as trivial and infuriating as brace placement. We will be using it with a few modifications (detailed below) for all of our Java, C and C++ code because of the syntactic similarities between the languages. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
-    \item \label{pyguide} Style Guide for Python Code: \url{http://www.python.org/dev/peps/pep-0008/} \\
-        A very good guide for Python code with general advice that applies to other programming languages as well. Please at least read the introduction, first section, and section on comments. If we do any coding in Python, the style should follow this guide. Comments in other languages should follow the advice in this guide; for all other areas the language's style guide naturally has precedence.
-    \item Pasta Code: \url{http://www.gnu.org/fun/jokes/pasta.code.html} \\
-        If you're doing object-oriented programming, please try for ravioli code. Canderli code and Ristto code should be avoided because of poor maintainability. Polenta code is nice, too, if it never needs to be modified (which is generally never the case, so watch out!)
-    \item Good Code: \url{http://xkcd.com/844/} \\
-        Please try to stay in the "Code Well" loop. Yes, requirements do change, and we've had to throw out a few projects because of this, but trust me: this is not always the case!
+    \item Eclipse (\url{http://www.eclipse.org/}) is a popular cross-platform IDE for Java and C++ development. It has all the features you'd expect from a standard IDE, plus a (somewhat clumsy) plugin installation system. It can integrate with version control systems such as Git (which we will most likely be using) through the plugin framework. It's a large piece of software -- it's several hundred megabytes and slow to start up on any system. However, many Java (and C++) programmers think the rich feature set, which includes integration with a sort of task-tracking software, is worth it. 
+    \item NetBeans (\url{http://netbeans.org/}) is definitely more lightweight than Eclipse but specializes on Java. It also has a plugin system with a large database of user-contributed plugins (Git support is naturally among them). Some programmers might find the relatively minimalistic approach of NetBeans more appealing than the one-stop-shop philosophy of Eclipse.
 \end{itemize}
+\subsubsection{C/C++}
+\begin{itemize}
+    \item As mentioned above, Eclipse also works well with C++. 
+    \item If you're on a Mac, you could check out XCode (it costs \$ 5 on the Mac App Store). However, it's frustrating to use for development not involving a shiny Mac application. 
+    \item On Windows, Visual Studio is the standard all-in-one IDE available for CSE students for free at \url{http://cselabs.umn.edu/software/msdnaa}. Although designed primarily for Windows development, it's usable for general C/C++ program development.
+\end{itemize}
+\subsubsection{C\#}
+\begin{itemize}
+    \item Those with Windows should use the Microsoft Visual Studio IDE. 
+    \item Those who don't have Windows (or don't want to install it) can try the Mono development environment, see \url{http://www.monodevelop.org/}. 
+\end{itemize}
+\subsubsection{Python}
+First, it's perfectly possible to develop Python with nothing but a text editor and terminal (that's what I do, and I prefer it to using an IDE). However, if you're used to using IDEs and want to use one for Python, there is one available: IDLE should be installed with the default Python installation (Linux users might need to install an additional package). It's about as minimalistic as IDEs get; nevetheless, it does simplify and integrate the Python development process. Users new to Python or lacking a decent command-line interface might find this helpful.
+\subsubsection{Multi-Language}
+If you like lightweight IDEs, try Geany (\url{http://www.geany.org/}). It's not tied to a specific language, which is both an advantage and a disadvantage depending on your personal preferences. In any case, it's got pretty much everything you need to edit and build most types of source code effectively.
+\subsubsection{Other}
+Search the web and use your best judgement \smiley.
+
+\section{Annotated Bibliography}
+These are the documents and Web resources referred to throughout the body of this document, more or less in order of appearance. Also listed here are a few lighthearted presentations of general tips on programming.
+\label{sec:references}
+% Gaah hack! Well, it works, I guess...
+% The aim is to get rid of the extraneous section heading, see
+% http://tex.stackexchange.com/questions/22645/hiding-the-title-of-the-bibliography
+\begingroup
+\renewcommand{\section}[2]{}
+\begin{thebibliography}{9}
+    \bibitem{javacon} Sun Code Conventons for Java: \url{http://www.oracle.com/technetwork/java/codeconventions-150003.pdf} \\
+        This is a good, but not perfect, introduction to basic style for Java source code. It provides a guide for the general style and layout of source code files in C-like languages so programmers don't have to fight with something as trivial and infuriating as brace placement. Please read this thoroughly if you have no experience with C syntax (come on, it's only 18 pages. A TL;DR response will disqualify you from our programming team). If you have programmed in the C-syntax languages before, at least skim the guide to see what specific conventions well be using.
+    \bibitem{pyguide} Style Guide for Python Code: \url{http://www.python.org/dev/peps/pep-0008/} \\
+        A very good guide for Python code with general advice that applies to other programming languages as well. Please at least read the introduction, first section, and section on comments. If we do any coding in Python, the style should follow this guide.
+    \bibitem{csguide} Microsoft's C\# Coding Conventions: \url{http://msdn.microsoft.com/en-us/library/ff926074.aspx}\\
+        A short guide that enumerates coding style guidelines, mostly those applying to constructs specific to the C\# language. The relationship between the C\# conventions and this document has not been formally set. Thankfully, there are almost no conflicts regarding general (language-inspecific) guidelines.
+    \bibitem{codecomplete} Steve McConnell's ``Code Complete,'' 2nd Ed. (Microsoft Press 2004). Amazon link \href{http://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670/ref=sr_1_1?ie=UTF8&qid=1388369682&sr=8-1&keywords=code+complete}{here}, but no guarantees on link persistence.\\
+        The respected and well-known guide to software development, covering every detail from project conception to commenting style. Last I checked, it is still the standard textbook for the CSCI 3801W (``Program Design and Development'') course at the University of Minnesota, a required course for all computer science majors.
+    \bibitem{doxyguide} Doxygen Manual: \url{http://www.stack.nl/~dimitri/doxygen/manual/index.html}\\
+        A thorough guide to the use of Doxygen in any type of code. Includes tutorial information such as program usage, commenting formats and feature lists, as well as an ostensibly complete reference. Covers usage specifics for C-syntax languages, Python, and a few others.
+    \bibitem{pasta} Pasta Code: \url{http://www.gnu.org/fun/jokes/pasta.code.html} \\
+        If you're doing object-oriented programming, please try for ravioli code. Canderli code and Ristto code should be avoided because of poor maintainability. Polenta code is nice, too, if it never needs to be modified (which is generally never the case, so watch out!)
+    \bibitem{goodcode} Good Code: \url{http://xkcd.com/844/} \\
+        Please try to stay in the "Code Well" loop. Yes, requirements do change, and we've had to throw out a project or two as a result, but trust me: It's not always that way!
+\end{thebibliography}
+\endgroup
 
 \end{document}
 
