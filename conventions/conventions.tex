@@ -167,20 +167,27 @@ The syntax for declaring pointer variables should have the asterisk (``pointer s
 \begin{codeex}
 BufferThreaded* buf;
 \end{codeex}
-This makes more semantic sense than the old C convention (which would be \texttt{BufferThreaded *buf;}), as you are declaring a variable \texttt{buf} of type \texttt{BufferThreaded pointer}.
+This makes more semantic sense than the old C convention, which would be
+\begin{codeex}
+BufferThreaded *buf;
+\end{codeex}
+as you are declaring a variable \texttt{buf} of type ``\texttt{BufferThreaded} pointer''.
 
 \subsubsection{Operator Overloading}
-C++ lets you override the standard operators (such as \texttt{+}, \texttt{==}, or \texttt{<<}) to implement your own functionality. Please \emph{only} overload operators if it makes sense considering the \emph{semantics} of the operator. For example, it is fine to overload \texttt{+} to join strings or add two vectors, but don't make it merge two address book records!
+C++ lets you override the standard operators (such as \texttt{+}, \texttt{==}, or \texttt{<{}<}) to implement your own functionality. Please \emph{only} overload operators if it makes sense considering the \emph{semantics} of the operator. For example, it is fine to overload \texttt{+} to join strings or add two vectors, but don't make it merge two address book records!
 
 You will find specific conventions for operator overloading in most good C++ books (or even online tutorials), but here is a summary:
 
 For unary operators (operators that only operate on a single object, as opposed to two of the same type), it is best to implement the \texttt{operator} function as a member within the class.
 
-For symmetric binary operators (that is, operators that operate on two objects \emph{and} return the same result regardless of the order of the operands), use a non-member function (make it a \emph{friend} of the relevant class if necessary). This makes it easier to show that the operation actually does obey the symmetry property.
+For symmetric binary operators (that is, operators that operate on two objects \emph{and} return the same result regardless of the order of the operands), use a non-member function (make it a \texttt{friend} of the relevant class if necessary). This makes it easier to show that the operation actually does obey the symmetry property.
 
-For asymmetric binary operators (for example, the \texttt{>>} operator), it may make sense to use either member or non-member functions, depending on the context. If you know enough about your class to implement this type of operator overloading, you probably know which style is best. Also note there are asymmetric binary operators (e.g. the assignment operators, like \texttt{=} or \texttt{+=}) that can only be implemented as member functions.
+For asymmetric binary operators (for example, the \texttt{>{}>} operator), it may make sense to use either member or non-member functions, depending on the context. If you know enough about your class to implement this type of operator overloading, you probably know which style is best. Also note there are asymmetric binary operators (e.g. the assignment operators, like \texttt{=} or \texttt{+=}) that can only be implemented as member functions.
 
 In any case, you have the option of using \texttt{const} for any of the arguments. If you are not going to modify an argument (generally a good idea unless you're doing something like add-assignment), use the \texttt{const} qualifier on the reference. Naturally, if you \emph{are} going to modify an argument, you can't use the \texttt{const} qualifier - but if you can avoid taking a non-const argument by making the operator a member function instead, do it.
+
+\subsubsection{Constructors and Initialization Lists}
+\textit{TODO}
 
 \subsection{Comments}
 Comments serve several different purposes in source code. A good, thorough enumeration of the various types can be found in Steve McConnell's ``Code Complete''~\cite{codecomplete}. The Python style guide~\cite{pyguide}, section ``\href{http://www.python.org/dev/peps/pep-0008/#comments}{Comments}'' (ignore the parts specific to Python syntax) provides a more concise overview; please read it. In short: Comments should \emph{not} repeat the code. Comments should \emph{never} contradict the code. Make a priority of updating the comments to reflect the code, preferably before every commit.
