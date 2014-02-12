@@ -131,7 +131,7 @@ The general GOFIRST code style bases on two style manuals: The Java style guide 
 
 For Python, the entire style guide applies. Please read it in its entirety if you plan on working with Python at all.
 
-For C-syntax languages, please read the Java style guide, sections 4-9. Also, observe section 3 insofar as it applies to your language, and take section 10 with a grain of salt. It contains good advice, but not all of it is applicable to or compatible with languages besides Java. Finally, I have one important disagreement with Section 4.2 of the guide: Lines should be broken \emph{after} binary operators, not before. This is the most important conflict between GOFIRST style and the Java style guide, so it's worth mentioning it here even though it's covered in the points below.
+For C-syntax languages, please read the Java style guide, sections 4-9. Also, observe section 3 insofar as it applies to your language, and take section 10 with a grain of salt. It contains good advice, but not all of it is applicable to or compatible with languages besides Java. Finally, I have one important disagreement with Section 4.2 of the guide: Lines should be broken \emph{after} binary operators, not before. This is the most important conflict between GOFIRST style and the Java style guide, so it's worth mentioning it here even though it's covered in the points below. There's more on line breaking in C-syntax languages (not only C/C++) in Section \ref{sec:ccpp-linebreak} below. However, if you break in a way that is consistent throughout a single code file/module and that maintains the visual distinction between different functional structures within the code (e.g. distinguishes a function definition from the body), then you're probably good.
 
 For both language classes, the specific recommendations in this section \emph{override} any conflicting recommendations in the applicable style guide. To repeat, if there is any conflict between the points below and one of the two online style guides, this guide wins.
 
@@ -186,10 +186,34 @@ For asymmetric binary operators (for example, the \texttt{>{}>} operator), it ma
 
 In any case, you have the option of using \texttt{const} for any of the arguments. If you are not going to modify an argument (generally a good idea unless you're doing something like add-assignment), use the \texttt{const} qualifier on the reference. Naturally, if you \emph{are} going to modify an argument, you can't use the \texttt{const} qualifier - but if you can avoid taking a non-const argument by making the operator a member function instead, do it.
 
-\subsubsection{Constructors and Initialization Lists}
+\subsubsection{Breaking Long Lines}
+\label{sec:ccpp-linebreak}
 \textit{TODO}
+\subsubsection{Function Definitions and Initialization Lists}
+Constructors in C++ can quickly become unwiedly due to features such as initialization lists (which allow convenient initialization of an object's member variables, possibly using arugments to the constructor). If your init lists push a constructor line over the 79-character limit (see Section \ref{sec:maxlinelength}), which they often will, break the line preferably right after the colon (\code{:}) like so:
+\begin{codeex}
+VisionPacket::VisionPacket(vector<Mat> lineContours, Matx33f perspTrans) :
+        lineContours(lineContours), perspTrans(perspTrans) {
+    linesGround.resize(lineContours.size());
+    sortByLength();
+    ...
+\end{codeex}
 
-\subsection{Comments}
+Notice the brace beginning the function body still goes at the end of the last line of the function definition; this is for consistency with our general C-syntax standards. Also notice the extra indentation of the second line of the constructor used to distinguish the continuation of the definition line from the body of the function.
+
+If the constructor is too long to fit on one line even without the initialization list, align the continuation of the argument list with the opening brace that started it, then indent the initialization list (and its continuation, if necessary) by one extra level relative to the function body. To illustrate with a really long example definition:
+\begin{codeex}
+VisionInterface:: VisionInterface(Matx33f cameraMat, Mat distCoeffs,
+                                  Matx33f perspectiveTrans,
+                                  std::string camAddress) :
+        cameraMat(cameraMat), distCoeffs(distCoeffs),
+        perspectiveTrans(perspectiveTrans) {
+    openKrn = getStructuringElement(MORPH_ELLIPSE, Size(5, 5));
+    ...
+\end{codeex}
+
+The idea is to visually separate the argument list from the initialization list. Notice also that with the proper indentation of the initialization list it is easy to identify the first line of the function definition (which is often what one is looking for when scanning through a function; the arguments should be documented in the function comment).
+\subsection{Commenting}
 Comments serve several different purposes in source code. A good, thorough enumeration of the various types can be found in Steve McConnell's ``Code Complete''~\cite{codecomplete}. The Python style guide~\cite{pyguide}, section ``\href{http://www.python.org/dev/peps/pep-0008/#comments}{Comments}'' (ignore the parts specific to Python syntax) provides a more concise overview; please read it. In short: Comments should \emph{not} repeat the code. Comments should \emph{never} contradict the code. Make a priority of updating the comments to reflect the code, preferably before every commit.
 
 Comments should not attempt to explain confusing code; please use tools such as variable names and defined constants to make your intent more clear. Comments are often helpful when used as headers for distinct logical sections of code. \textdef{Summary comments} and \textdef{documentation comments} (block comments, function comments) are more useful than \textdef{inline comments} (or one-line non-summary comments).
@@ -257,7 +281,9 @@ Claiming authorship is somewhat of a subjective issue; if you have made a signif
 If you wish to claim \emph{copyright} over a certain section or file of code (rather than transferring copyright to GOFIRST\footnote{Honestly, I'm not sure if such a transfer is legally possible without an explicit written agreement, or what even counts as a written agreement under copyright law. Before we discuss licensing and/or publishing our code we must also discuss copyright law as it applies to our situation and prepare a written agreement for transfer of copyright if necessary.}
 - this issue is mostly distinct from authorship credit), please first discuss it with the other active developers of the project, including GOFIRST's Director of Engineering (or, should that position no longer exist at this time, the equivalent or successor position). The issue of transfer of copyright as it applies to GOFIRST software development must still be clarified, preferably in a meeting of the GOFIRST officers and any interested GOFIRST developers. As far as I can tell, you have the right to copyright a code file as your own that you alone authored, as long as you have not waived that right in a previous written agreement. If you claim copyright, you also have the right to license the code file however you please. However, your fellow developers will appreciate it if you would let them know if you plan to claim this right.
 
-\subsection{Line Length} The \emph{maximum} number of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
+\subsection{Line Length}
+\label{sec:maxlinelength}
+The \emph{maximum} number of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
 
 The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
 
