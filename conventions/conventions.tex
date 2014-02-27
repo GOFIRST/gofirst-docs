@@ -43,7 +43,7 @@ citecolor=blue
     \today
 }
 \lfoot{
-\footnotesize{Copyright © 2012-\the\year  GOFIRST. All rights reserved.}
+\footnotesize{Copyright © 2012-\the\year{} GOFIRST. All rights reserved.}
 }
 \rfoot{Page \textbf{\thepage} of \pageref{LastPage}}
 \renewcommand{\footrulewidth}{0.4pt}
@@ -54,7 +54,7 @@ citecolor=blue
 % Special code-example environment that fits 80 characters in one \textwidth
 % The conversion factor is the golden ratio / 80 - it is the vertical size of
 % characters that fit 80 times horizontally in a \textwidth.
-\DefineVerbatimEnvironment{codeex}{Verbatim}{frame=single,
+\DefineVerbatimEnvironment{codeex}{Verbatim}{frame=single, samepage=true,
     formatcom=\fontsize{0.02023\textwidth}{0.02427\textwidth}\selectfont}
 \newcommand{\var}[1]{\texttt{#1}}
 \newcommand{\commandline}[1]{\begin{quotation}\texttt{\$ #1}\end{quotation}}
@@ -131,7 +131,7 @@ The general GOFIRST code style bases on two style manuals: The Java style guide 
 
 For Python, the entire style guide applies. Please read it in its entirety if you plan on working with Python at all.
 
-For C-syntax languages, please read the Java style guide, sections 4-9. Also, observe section 3 insofar as it applies to your language, and take section 10 with a grain of salt. It contains good advice, but not all of it is applicable to or compatible with languages besides Java. Finally, I have one important disagreement with Section 4.2 of the guide: Lines should be broken \emph{after} binary operators, not before. This is the most important conflict between GOFIRST style and the Java style guide, so it's worth mentioning it here even though it's covered in the points below. There's more on line breaking in C-syntax languages (not only C/C++) in Section \ref{sec:ccpp-linebreak} below. However, if you break in a way that is consistent throughout a single code file/module and that maintains the visual distinction between different functional structures within the code (e.g. distinguishes a function definition from the body), then you're probably good.
+For C-syntax languages, please read the Java style guide, sections 4-9. Also, observe section 3 insofar as it applies to your language, and take section 10 with a grain of salt. It contains good advice, but not all of it is applicable to or compatible with languages besides Java. Finally, I have one important disagreement with Section 4.2 of the guide: Lines should be broken \emph{after} binary operators, not before. This is the most important conflict between GOFIRST style and the Java style guide, so it's worth mentioning it here even though it's covered in the points below. There's more on line breaking in general in Section~\ref{sec:line-cont} below, and more on line continuation rules specific to C++ in Section~\ref{sec:ccpp-initlists} below. For any finer points of line continuation not covered below, just remember: if you break in a way that is consistent throughout a single code file/module and that maintains the visual distinction between different functional structures within the code (e.g. distinguishes a function definition from the body), then you're probably good.
 
 For both language classes, the specific recommendations in this section \emph{override} any conflicting recommendations in the applicable style guide. To repeat, if there is any conflict between the points below and one of the two online style guides, this guide wins.
 
@@ -142,6 +142,8 @@ One exception to the above rule is C\# code, for which the Microsoft coding conv
 The languages C and C++ contain syntactic elements that are not present in Java, such as pointers and (for C++) templates. Also, the syntax for class definitions (especially when inheritance is involved) is somewhat different. This subsection sets conventions for using those features.
 
 First of all, there may be some features that are not covered in this subsection (yet). For those features, the style set by the code examples and tutorials available at \url{http://cplusplus.com} should serve as an adequate guide until those features can be added here.
+
+%TODO Add something on templates?
 
 \subsubsection{General Peculiarities and Tips}
 The C++ language has the peculiarity that two styles of class declaration are possible: One with the declarations in a header file and implementations in a C++ source file of the same name, and one with the entire class declaration and definition \textdef{inline} in a single C++ source file. The former is preferred, as it is impossible to \code{\#include} C++ source files in other files.
@@ -186,30 +188,32 @@ For asymmetric binary operators (for example, the \texttt{>{}>} operator), it ma
 
 In any case, you have the option of using \texttt{const} for any of the arguments. If you are not going to modify an argument (generally a good idea unless you're doing something like add-assignment), use the \texttt{const} qualifier on the reference. Naturally, if you \emph{are} going to modify an argument, you can't use the \texttt{const} qualifier - but if you can avoid taking a non-const argument by making the operator a member function instead, do it.
 
-\subsubsection{Breaking Long Lines}
-\label{sec:ccpp-linebreak}
-\textit{TODO}
-\subsubsection{Function Definitions and Initialization Lists}
-Constructors in C++ can quickly become unwiedly due to features such as initialization lists (which allow convenient initialization of an object's member variables, possibly using arugments to the constructor). If your init lists push a constructor line over the 79-character limit (see Section \ref{sec:maxlinelength}), which they often will, break the line preferably right after the colon (\code{:}) like so:
+\subsubsection{Constructors, Initialization Lists, and Line Continuation}
+\label{sec:ccpp-initlists}
+Constructors in C++ can quickly become unwiedly due to features such as initialization lists (which allow convenient initialization of an object's member variables, possibly using arugments to the constructor). This is intended as a supplement to Section~\ref{sec:line-cont} dealing specifically with C++ constructors.
+
+If your init lists push a constructor line over the 79-character limit \footnote{see Section \ref{sec:maxlinelength}}, which they often will, break the line preferably right after the colon (\code{:}) like so:
 \begin{codeex}
 VisionPacket::VisionPacket(vector<Mat> lineContours, Matx33f perspTrans) :
-        lineContours(lineContours), perspTrans(perspTrans) {
+              lineContours(lineContours), perspTrans(perspTrans) {
     linesGround.resize(lineContours.size());
     sortByLength();
     ...
+}
 \end{codeex}
 
-Notice the brace beginning the function body still goes at the end of the last line of the function definition; this is for consistency with our general C-syntax standards. Also notice the extra indentation of the second line of the constructor used to distinguish the continuation of the definition line from the body of the function.
+Notice the brace beginning the function body still goes at the end of the last line of the function definition; this is for consistency with our general C-syntax standards. Also notice the extra indentation of the second line of the constructor used to distinguish the continuation of the definition line from the body of the function. To make it look nicer, the start of the initialization list has been aligned with the name of the function (constructor), after the scope specifier ending in \code{::}. This is the preferred style unless said scope specifier is impractically long or short; in that case, just indent the init list one level (4 spaces) out beyond the normal indentation level of the function body.
 
-If the constructor is too long to fit on one line even without the initialization list, align the continuation of the argument list with the opening brace that started it, then indent the initialization list (and its continuation, if necessary) by one extra level relative to the function body. To illustrate with a really long example definition:
+If the constructor is too long to fit on one line even without the initialization list, align the continuation of the argument list with the opening parenthesis that started it, then indent the initialization list (and its continuation, if necessary) as described above. To illustrate with a really long example definition:
 \begin{codeex}
-VisionInterface:: VisionInterface(Matx33f cameraMat, Mat distCoeffs,
-                                  Matx33f perspectiveTrans,
-                                  std::string camAddress) :
-        cameraMat(cameraMat), distCoeffs(distCoeffs),
-        perspectiveTrans(perspectiveTrans) {
+VisionInterface::VisionInterface(Matx33f cameraMat, Mat distCoeffs,
+                                 Matx33f perspectiveTrans,
+                                 std::string camAddress) :
+                 cameraMat(cameraMat), distCoeffs(distCoeffs),
+                 perspectiveTrans(perspectiveTrans) {
     openKrn = getStructuringElement(MORPH_ELLIPSE, Size(5, 5));
     ...
+}
 \end{codeex}
 
 The idea is to visually separate the argument list from the initialization list. Notice also that with the proper indentation of the initialization list it is easy to identify the first line of the function definition (which is often what one is looking for when scanning through a function; the arguments should be documented in the function comment).
@@ -260,6 +264,102 @@ InputArray openKrn;
 \end{codeex}
 
 For more details, see the Doxygen manual \cite{doxyguide} section ``\href{http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html#specialblock}{Special comment blocks}''.
+\subsection{Line Length}
+\label{sec:maxlinelength}
+The \emph{maximum} number of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. 
+
+The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
+
+\subsection{Line Continuation}
+\label{sec:line-cont}
+First, if there is a logical way to get around having long lines (for example, assigning the result of a long expression to an intermediate variable with a shorter name) then do it. Do not, however, just shorten variable names to keep everything on one line. \emph{Definitely} do not ``rename'' variables by assigning them to other variables with shorter names! And finally, this should go without saying: One statement\footnote{A statement is a logical division of code - in C-syntax languages, statements are separated by semicolons, thus multiple statements \emph{could} appear on a single line of a source file. A similar construct is \emph{possible} (not recommended!) in Python.} per line. Do not try to stuff multiple statements onto a single line, \emph{especially} where doing so would push the line over the length limit.
+
+If you are stuck with a long line, you will have to break it somewhere. The Python style guide \cite{pyguide}, section ``Code lay-out'' subsection ``\href{http://www.python.org/dev/peps/pep-0008/#indentation}{Indentation}'' suggests two conventions for continuing long function definitions or mult-line constructs, both of which can be extended in a straightforward way to other languages. The main concept is the alignment of the wrapped part of a list, which here means any number of terms separated either by commas or operators. One example could be the argument list in a function definition or call. Another example is a long compound algebraic or boolean expression.
+
+Two styles can be used for breaking lists. In either case, the intent is to distinguish the continuation from the surrounding text. This can get particularly hairy in function definitions, where two levels of indentation mix. An example of the aligned (``pretty-printed'') style is shown below in C++:
+\begin{codeex}
+// Function declaration
+Mat VisionAlg::findHueRange(InputArray img, double minHue, double maxHue,
+                            InputArray openKrn, InputArray closeKrn) {
+    // Start of function body
+    Mat hsvImg(img.size(), CV_32FC3);
+    ...
+}
+\end{codeex}
+The first line following a function declaration is normally indented in one level relative to the line above it; the extra indentation is necessary to distinguish the continuation of the declaration line from the first line of the function body that would normally occupy that place. The alignment helps keep things organized and visually appealing.
+
+An example of the same function definition with the hanging-indent convention:
+\begin{codeex}
+// Function declaration
+Mat VisionAlg::findHueRange(
+        InputArray img, double minHue, double maxHue,
+        InputArray openKrn, InputArray closeKrn) {
+    // Start of function body
+    Mat hsvImg(img.size(), CV_32FC3);
+    ...
+}
+\end{codeex}
+Notice the empty opening parenthesis before the line continuation. This is to ensure all items of the parameter list still maintain a sort of alignment with each other. The hanging-indent style is particularly useful with a long stretch of unbreakable text before the line break (e.g. with very long function names - imagine the above function was called \code{VisionAlg::findTheRangeOfHuesWithBarrelsInside} and you can imagine why the first aligned style might not work so well).
+
+Also, if the separators in the list happen to be operators instead of commas, please be consistent and break lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
+
+A special case of breakable long lines is the assignment of a value to a variable. If one were to interpret such a statement as a list, the variable would the first item, the value would be the second, and the \code{=} operator would be used to join them. In this case, however, if you have to break after the \code{=} operator then always indent the continuation by one level relative to the start of the statement, like so:
+\begin{codeex}
+void awfulFunction(wayTooLongParameterName):
+    reallyFreakingLongVariableName =
+        unnecessarilyLongFunctionName(wayTooLongParameterName);
+    // other statements
+}
+\end{codeex}
+However, if you can break the line at another point, that may be preferable, especially if more than two lines are necessary to fit the entire statement. For example, this:
+\begin{codeex}
+void awfulFunction(wayTooLongParameterName):
+    reallyFreakingLongVariableName = unnecessarilyLongFunctionName(
+        wayTooLongParameterName * 2,
+        wayTooLongParameterName * 4);
+    // other statements
+}
+\end{codeex}
+looks much better than this:
+\begin{codeex}
+void awfulFunction(wayTooLongParameterName):
+    reallyFreakingLongVariableName =
+        unnecessarilyLongFunctionName(
+            wayTooLongParameterName * 2,
+            wayTooLongParameterName * 4);
+    // other statements
+}
+\end{codeex}
+
+This rule applies in general as well: If you can, avoid using multiple indent levels to continue a single statement.
+
+In any case, make sure that the language understands you are continuing a line; use whatever escaping constructs or implicit continuations are necessary to make the compiler interpret the continued fragment as a continuation of the previous line.
+
+\subsection{Whitespace}
+\label{sec:spacing}
+The issue of whitespace is often so contentious that it is a good idea to set detailed and consistent rules for its use throughout source code.
+
+Please read the Python style guide \cite{pyguide}, section ``\href{http://www.python.org/dev/peps/pep-0008/#whitespace-in-expressions-and-statements}{Whitespace in Expressions and Statements}''. For C-syntax code, hold yourself to these rules where they are applicable to your language. For Python code, you should observe the entire style guide anyway.
+
+Also, don't leave whitespace at the end of your lines. For example, this makes it harder to copy and paste entire lines in some text editors. It is possible to set your editor to display such spacing errors.
+
+\subsubsection{Spaces vs. Tabs}
+For indentation, use four spaces and no tabs. To repeat, your source files should \emph{not} contain the Tab character. Often, stupid "holy wars" flare up about what style of indentation is preferable or even superior; setting a convention throughout the project and sticking with it is the best way to avoid needless disputes, even if it inconveniences some developers' workflows. The spaces vs. tabs issue mostly comes down to personal preference and there is not much to be gained in a technical sense by choosing one convention over the other. I chose spaces because of a minor technical reason relating to the continuation of long lines of code (although you could probably make a convincing technical argument either way): Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are often a recipe for disaster (different editors sometimes throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
+
+So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
+%TODO Instuctions for various editors
+
+\subsubsection{Blank Lines}
+No more than necessary, but please do use them to separate logical ``paragraphs'' of code (e.g. 5-10 lines inside a function that perform a distinct task). At the top level, use two blank lines in between function definitions as well as between distinct sections of code with different purposes, e.g. between the \code{\#include} section and the top-level variable or function declarations. Within a class, use one blank line between each function definition and to separate a block of declarations from the function definitions. Do not use blank lines directly after a function declaration.
+
+\subsubsection{Miscellaneous Whitespace Notes}
+Avoid whitespace at the end of lines. This makes it harder to copy and paste entire lines in some editors. If your editor has a feature to make trailing spaces visible, turn it on.
+
+\subsection{File Naming}
+Source files for C-syntax languages should be named after the main class in the file, with exactly the same case, and the standard extension for the file type (see Section \ref{sec:ccpp-special} for file extensions for C++). In the case of Java, this convention is enforced by the compiler; the name of the file must be the same as the unique public class residing in that file (there can only be one). For other languages, name the file after the logically dominant or most important class in the file; this is usually (but not always) the first class defined in the file. If your language uses header files, always give the source/implementation file the same name as the associated header file (should one exist), modulo extension.
+
+Python follows a different file naming convention. Files are associated with Python \textdef{modules}; a module is more or less the runtime version of a Python file, and has the same name as the associated file with the \code{.py} suffix stripped. The naming conventions for Python modules (files) and packages are specified in the Python style guide \cite{pyguide}, section ``Naming Conventions'' subsection ``\href{http://www.python.org/dev/peps/pep-0008/#package-and-module-names}{Package and Module Names}''.
+
 \subsection{Copyright Notice and Legal Issues}
 All source code files should have the following notice\footnote{Technical notes: Fit the comment style to whatever language you are using; just make sure Doxygen recognizes it. The special Doxygen commands (author, copyright) are preferred, but not required. The copyright sign (\code{©}) may be replaced in code by \code{(c)} if necessary. As a reminder, you can always copy and paste the symbol from other code files.}
 as a comment in Doxygen format at or near the top:
@@ -276,55 +376,10 @@ as a comment in Doxygen format at or near the top:
 \end{codeex}
 The copyright is necessary, or at least a good idea, because it protects our intellectual property rights over the code. The use of the term ``intellectual property'' doesn't mean the code is to be kept proprietary; on the contrary, it mostly refers to our right to be credited as the author(s) of the code. Most free-software licenses, for example, use copyright as an enforcement tool. It prevents others from ripping off the code and claiming it as their own for the purpose of personal credit or profit. As we haven't yet decided how to license our code, a copyright with all rights reserved is the safest option. Don't worry; whatever license we choose, we will make sure your authorship of the code is recognized and credited.
 
-Claiming authorship is somewhat of a subjective issue; if you have made a significant contribution to the code in the file, you may list yourself as an author. The first author listed should be the current primary maintainer of the code in the file, if such exists. In case any conflict should arise, the definition of ``significant'', and thus of issues of authorship in general, are taken to be a matter of consensus among active developers of the project (``active'' meaning they are active members of GOFIRST and have directly participated in the software development of the project in question during the current academic year).
+Claiming authorship is a somewhat subjective issue; if you have made a significant contribution to the code in the file, you may list yourself as an author. The first author listed should be the current primary maintainer of the code in the file, if such exists. In case any conflict should arise, the definition of ``significant'', and thus of issues of authorship in general, are taken to be a matter of consensus among active developers of the project (``active'' meaning they are active members of GOFIRST and have directly participated in the software development of the project in question during the current academic year).
 
 If you wish to claim \emph{copyright} over a certain section or file of code (rather than transferring copyright to GOFIRST\footnote{Honestly, I'm not sure if such a transfer is legally possible without an explicit written agreement, or what even counts as a written agreement under copyright law. Before we discuss licensing and/or publishing our code we must also discuss copyright law as it applies to our situation and prepare a written agreement for transfer of copyright if necessary.}
 - this issue is mostly distinct from authorship credit), please first discuss it with the other active developers of the project, including GOFIRST's Director of Engineering (or, should that position no longer exist at this time, the equivalent or successor position). The issue of transfer of copyright as it applies to GOFIRST software development must still be clarified, preferably in a meeting of the GOFIRST officers and any interested GOFIRST developers. As far as I can tell, you have the right to copyright a code file as your own that you alone authored, as long as you have not waived that right in a previous written agreement. If you claim copyright, you also have the right to license the code file however you please. However, your fellow developers will appreciate it if you would let them know if you plan to claim this right.
-
-\subsection{Line Length}
-\label{sec:maxlinelength}
-The \emph{maximum} number of characters allowed in one line of source code is 79. Don't go over it, even by one character. Doing so will annoy every other person who tries to read the code with an 80-character terminal, as the resulting line wraps visually disrupt and distort the text. Every decent language has a feature for long-line continuation; please use it. Also, please break your lines \textit{after} binary operators such as \code{\&\&} or \code{=}.
-
-The only exception here is the source code for documentation to be typeset with \TeX / \LaTeX (like this document). Since such files contain long blocks of prose, it can often be desirable to let the editor handle the line wrapping.
-
-\subsection{Whitespace}
-\label{sec:spacing}
-The issue of whitespace is often so contentious that it is a good idea to set detailed and consistent rules for its use throughout source code.
-
-Please read the Python style guide \cite{pyguide}, section ``\href{http://www.python.org/dev/peps/pep-0008/#whitespace-in-expressions-and-statements}{Whitespace in Expressions and Statements}''. For C-syntax code, hold yourself to these rules where they are applicable to your language. For Python code, you should observe the entire style guide anyway.
-
-Also, don't leave whitespace at the end of your lines. For example, this makes it harder to copy and paste entire lines in some text editors. It is possible to set your editor to display such spacing errors.
-
-\subsubsection{Spaces vs. Tabs}
-For indentation, use four spaces and no tabs. To repeat, your source files should \emph{not} contain the Tab character. Often, stupid "holy wars" flare up about what style of indentation is preferable or even superior; setting a convention throughout the project and sticking with it is the best way to avoid needless disputes, even if it inconveniences some developers' workflows. The spaces vs. tabs issue mostly comes down to personal preference and there is not much to be gained in a technical sense by choosing one convention over the other. I chose spaces because of a minor technical reason relating to the continuation of long lines of code (although you could probably make a convincing technical argument either way): Clearly you want to align the continuation in some logical way with the preceding line, such as a continued argument list of a function that you want to align with the first argument in the previous line. Plain tabs are often a recipe for disaster (different editors sometimes throw off the indentation wildly), and mixing spaces and tabs for indentation in one file is generally frowned upon.
-
-So please, for the sake of consistency, set your editor to expand tabs to spaces up to the next column that is a multiple of four (most decent editors should be able to do this). Those who claim to have a real problem with this in terms of readability will have to deal with it, i.e. either get used to it or take the time to program/script a solution.
-%TODO Instuctions for various editors
-
-\subsubsection{Line Continuation}
-Our limit on line length necessitates a consistent convention for the whitespace mechanics of line continuation. The Python style guide \cite{pyguide}, section ``Code lay-out'' subsection ``\href{http://www.python.org/dev/peps/pep-0008/#indentation}{Indentation}'' suggests a convention for continuing long function calls or mult-line constructs. The hanging-indent convention, a variant on the ``Pretty-Printing'' convention from Lisp-like languages, is preferred. For the hanging indent, please use one indent (4 extra spaces) in addition to the indent level that a normal line in that position would have. For example, if you are writing a long function declaration (the first logical line of the definition, which specifies the function name, arguments, and sometimes the return type) that wraps onto the next line (or lines), indent the continuation \emph{two} levels (8 spaces) farther in than the first line of the declaration, like so:
-\begin{codeex}
-// Function declaration
-VisionInterface:: VisionInterface(
-        Matx33f cameraMat, Mat distCoeffs, Matx33f perspTrans,
-        std::string camAddress) :
-        cameraMat(cameraMat), distCoeffs(distCoeffs), perspTrans(perspTrans) {
-    // Start of function body
-    if (!source.open(camAddress)) {
-    ...
-\end{codeex}
-The first line following a function declaration is normally indented in one level relative to the line above it; the extra indent is necessary to distinguish the continuation of the declaration line from the first line of the function body that would normally occupy that place.
-
-\subsubsection{Blank Lines}
-No more than necessary, but please do use them to separate logical ``paragraphs'' of code (e.g. 5-10 lines inside a function that perform a distinct task). At the top level, use two blank lines in between function definitions as well as between distinct sections of code with different purposes, e.g. between the \code{\#include} section and the top-level variable or function declarations. Within a class, use one blank line between each function definition and to separate a block of declarations from the function definitions. Do not use blank lines directly after a function declaration.
-
-\subsubsection{Miscellaneous Whitespace Notes}
-Avoid whitespace at the end of lines. This makes it harder to copy and paste entire lines in some editors. If your editor has a feature to make trailing spaces visible, turn it on.
-
-\subsection{File Naming}
-Source files for C-syntax languages should be named after the main class in the file, with exactly the same case, and the standard extension for the file type (see Section \ref{sec:ccpp-special} for file extensions for C++). In the case of Java, this convention is enforced by the compiler; the name of the file must be the same as the unique public class residing in that file (there can only be one). For other languages, name the file after the logically dominant or most important class in the file; this is usually (but not always) the first class defined in the file. If your language uses header files, always give the source/implementation file the same name as the associated header file (should one exist), modulo extension.
-
-Python follows a different file naming convention. Files are associated with Python \textdef{modules}; a module is more or less the runtime version of a Python file, and has the same name as the associated file with the \code{.py} suffix stripped. The naming conventions for Python modules (files) and packages are specified in the Python style guide \cite{pyguide}, section ``Naming Conventions'' subsection ``\href{http://www.python.org/dev/peps/pep-0008/#package-and-module-names}{Package and Module Names}''.
 
 \section{Technical Notes}
 The notes below don't necessarily relate to the layout and style of code; however, they are still important for compatibility and standardization purposes.
